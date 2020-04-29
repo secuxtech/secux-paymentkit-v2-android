@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/example/example.iml" filepath="$PROJECT_DIR$/example/example.iml" group="secux-paymentkit-example/example" />
+      <module fileurl="file://$PROJECT_DIR$/secux-paymentkit/secux-paymentkit.iml" filepath="$PROJECT_DIR$/secux-paymentkit/secux-paymentkit.iml" group="secux-paymentkit-example/secux-paymentkit" />
+      <module fileurl="file://$PROJECT_DIR$/secux-paymentkit-example.iml" filepath="$PROJECT_DIR$/secux-paymentkit-example.iml" group="secux-paymentkit-example" />
+    </modules>
+  </component>
+</project>

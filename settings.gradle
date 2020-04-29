@@ -1,0 +1,2 @@
+include ':example', ':secux-paymentkit'
+rootProject.name='secux-paymentkit-example'
