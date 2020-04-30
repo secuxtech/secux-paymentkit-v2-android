@@ -411,7 +411,7 @@ Use SecuXPaymentManager object to do the operations below
     };
 ```
 
-4. <b>Get all payment history</b>
+5. <b>Get all payment history</b>
 #### <u>Declaration</u>
 ```java
     Pair<Integer, String> getPaymentHistory(String token, int pageNum, int count, 
@@ -459,7 +459,7 @@ Use SecuXPaymentManager object to do the operations below
                 " amount=" + history.mAmount.toString() + history.mToken + " timestamp=" + history.mTransactionTime);
     }
 ```
-5. <b>Get payment history from transaction code</b>
+6. <b>Get payment history from transaction code</b>
 #### <u>Declaration</u>
 ```java
     Pair<Integer, String> getPaymentHistory(String token, String transactionCode, 
