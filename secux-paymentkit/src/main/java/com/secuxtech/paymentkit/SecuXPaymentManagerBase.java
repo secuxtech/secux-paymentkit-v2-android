@@ -271,7 +271,7 @@ public class SecuXPaymentManagerBase {
     }
 
     protected void handlePaymentDone(final boolean ret, final String errorMsg){
-        Log.i(TAG, "Payment done " + String.valueOf(ret));
+        Log.i(TAG, "Payment done " + String.valueOf(ret) + " error:" + errorMsg);
         if (mCallback!=null){
             String transCode = "";
             String error = errorMsg;

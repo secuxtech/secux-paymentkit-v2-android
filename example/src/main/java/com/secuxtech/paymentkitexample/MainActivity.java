@@ -20,6 +20,7 @@ import com.secuxtech.paymentkit.*;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
                 //User account operations
                 mAccount = new SecuXUserAccount("maochuntest1@secuxtech.com", "12345678");
 
-                //testAccount();
+                testAccount();
                 testPayment();
             }
         }).start();
@@ -64,6 +65,14 @@ public class MainActivity extends AppCompatActivity {
         if (ret.first == SecuXServerRequestHandler.SecuXRequestOK) {
 
             //ret = mAccountManager.changePassword("12345678", "12345678");
+
+            List<Pair<String, String>> coinTokenArray = new ArrayList<>();
+            ret = mAccountManager.getSupportedCointokenArray(coinTokenArray);
+            if (ret.first == SecuXServerRequestHandler.SecuXRequestOK) {
+                for (int i = 0; i < coinTokenArray.size(); i++) {
+                    Log.i(TAG, coinTokenArray.get(i).toString());
+                }
+            }
 
             //Get account all balance
             ret = mAccountManager.getCoinAccountList(mAccount);
@@ -102,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         //Payment operations
         Pair<Integer, String>  ret = mAccountManager.loginUserAccount(mAccount);
         if (ret.first==SecuXServerRequestHandler.SecuXRequestOK) {
-            /*
+
             //Get payment history
             ArrayList<SecuXPaymentHistory> payHisArr = new ArrayList<>();
             int idx = 1;
@@ -125,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, "Store = " + history.mStoreName + " CoinType =" + history.mCoinType +
                         " amount=" + history.mAmount.toString() + history.mToken + " timestamp=" + history.mTransactionTime);
             }
-            */
+
             //Must set the callback for the SecuXPaymentManager
             mPaymentManager.setSecuXPaymentManagerCallback(mPaymentMgrCallback);
 
@@ -143,7 +152,6 @@ public class MainActivity extends AppCompatActivity {
                 }catch (Exception e){
                     Log.i(TAG, "Invalid store info "+e.getLocalizedMessage());
                 }
-
             }
         }
     }
