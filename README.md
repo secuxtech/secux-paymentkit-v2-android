@@ -1,6 +1,6 @@
 # secux-paymentkit-v2
 
-[![](https://jitpack.io/v/secuxtech/secux-paymentkit-android.svg)](https://jitpack.io/#secuxtech/secux-paymentkit-android)
+[![](https://jitpack.io/v/secuxtech/secux-paymentkit-android.svg)](https://jitpack.io/#secuxtech/secux-paymentkit-v2-android)
 
 ## Requirements
 
@@ -51,6 +51,18 @@ import com.secuxtech.paymentkit.*;
 ```
 
 ## Usage
+
+### Server URL
+Set server URL before using the APIs below
+
+#### <u>Declaration</u>
+```java
+    void setBaseServer(String url)
+```
+
+#### <u>Parameters</u>
+        Server URL. e.g. https://pmsweb-test.secux.io
+
 
 ### SecuXAccount related operations
 
