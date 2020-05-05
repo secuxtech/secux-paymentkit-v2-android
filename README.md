@@ -1,6 +1,6 @@
 # secux-paymentkit-v2
 
-[![](https://jitpack.io/v/secuxtech/secux-paymentkit-android.svg)](https://jitpack.io/#secuxtech/secux-paymentkit-v2-android)
+[![](https://jitpack.io/v/secuxtech/secux-paymentkit-v2-android.svg)](https://jitpack.io/#secuxtech/secux-paymentkit-v2-android)
 
 ## Requirements
 
@@ -495,7 +495,7 @@ Use SecuXPaymentManager object to do the operations below
 
 ## Demo APP
 
-Please find more in our [demo app](https://github.com/secuxtech/secux-paymentdemo-android)
+Please find more in our [demo app](https://github.com/secuxtech/secux-paymentdemo-v2-android)
 
 ## Author
 
