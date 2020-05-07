@@ -80,9 +80,6 @@ public class SecuXPaymentManagerBase {
 
     SecuXPaymentManagerBase(){
         Log.i(TAG, "SecuXPaymentManagerBase");
-
-
-
     }
 
     protected Integer getPaymentStoreInfo(String deviceID){
