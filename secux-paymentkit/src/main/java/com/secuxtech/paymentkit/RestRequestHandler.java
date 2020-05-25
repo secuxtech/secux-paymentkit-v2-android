@@ -137,7 +137,7 @@ class RestRequestHandler {
                 InputStream errIn = connection.getErrorStream();
                 response = getResponse(errIn);
                 //String errormsg = connection.getResponseMessage();
-                Log.e(TAG, "Server request response code = " + response);
+                Log.e(TAG, "Server request " + path + " response code = " + response);
             }
             connection.disconnect();
 
@@ -252,7 +252,8 @@ class RestRequestHandler {
                 InputStream errIn = connection.getErrorStream();
                 response = getResponse(errIn);
                 //String errormsg = connection.getResponseMessage();
-                Log.e(TAG, "Server request response code = " + response);
+
+                Log.e(TAG, "Server request: " + path + " param: " + param.toString() + "  response code = " + response);
             }
 
             connection.disconnect();
