@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
             mPaymentManager.setSecuXPaymentManagerCallback(mPaymentMgrCallback);
 
             //User SecuXPaymentManager to get valid payment info. from the QRCode string;
-            ret = mPaymentManager.getDeviceInfo("{\"amount\":\"2\", \"coinType\":\"DCT:SPC\",\"deviceIDhash\":\"f962639145992d7a710d33dcca503575eb85d759\"}");
+            ret = mPaymentManager.getDeviceInfo("{\"amount\":\"2\", \"coinType\":\"DCT:SPC\",\"deviceIDhash\":\"592e41d67ee326f82fd6be518fd488d752f5a1b9\"}");
             if (ret.first==SecuXServerRequestHandler.SecuXRequestOK) {
 
                 try{
