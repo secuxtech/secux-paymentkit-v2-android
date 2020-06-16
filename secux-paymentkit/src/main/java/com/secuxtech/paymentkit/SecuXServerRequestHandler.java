@@ -27,6 +27,7 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
     static final String getDeviceInfoUrl = baseURL + "/api/Terminal/GetDeviceInfo";
     static final String getSupportedSymbolUrl = baseURL + "/api/Terminal/GetSupportedSymbol";
     static final String getChainAccountListUrl = baseURL + "/api/Consumer/GetChainAccountList";
+    static final String accountOperationUrl = baseURL +  "/api/Consumer/BindingChainAccount";
 
     private static String mToken = "";
 
@@ -380,6 +381,27 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
         try{
             JSONObject param = new JSONObject(paymentInfo);
             Pair<Integer, String> response = this.processPostRequest(getDeviceInfoUrl, param, mToken);
+            return response;
+
+        }catch (Exception e){
+            Log.e(TAG, e.getMessage());
+            return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
+        }
+    }
+
+    public Pair<Integer, String> accountOperation(String coinType, String accountName, String desc, String type){
+        if (mToken.length()==0){
+            Log.e(TAG, "No token");
+            return new Pair<>(SecuXRequestFailed, "No token");
+        }
+
+        try{
+            JSONObject param = new JSONObject();
+            param.put("coinType", coinType);
+            param.put("account", accountName);
+            param.put("desc", desc);
+            param.put("actionType", type);
+            Pair<Integer, String> response = this.processPostRequest(accountOperationUrl, param, mToken);
             return response;
 
         }catch (Exception e){

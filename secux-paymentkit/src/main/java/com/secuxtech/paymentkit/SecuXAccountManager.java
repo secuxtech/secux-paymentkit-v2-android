@@ -288,7 +288,13 @@ public class SecuXAccountManager {
         return response;
     }
 
+    public Pair<Integer, String> coinAccountOperation(String coinType, String accountName, String desc, String type){
+        if (type.compareTo("Add")!=0 && type.compareTo("Binding")!=0 && type.compareTo("Unbind")!=0){
+            return new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Invalid type");
+        }
 
+        return mSecuXSvrReqHandler.accountOperation(coinType, accountName, desc, type);
+    }
 
     /*
     public Map<String, Double> getCoinUSDRate(){
