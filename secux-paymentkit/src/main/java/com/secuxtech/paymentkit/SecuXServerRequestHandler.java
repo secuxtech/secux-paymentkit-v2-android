@@ -238,7 +238,9 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             //param.put("account", sender);
             param.put("receiver", payInfo.mDevID);
 
-            Pair<Integer, String> response = this.processPostRequest(paymentUrl, param, mToken, 15000);
+            Log.i(TAG, param.toString());
+
+            Pair<Integer, String> response = this.processPostRequest(paymentUrl, param, mToken, 20000);
             return response;
 
         }catch (Exception e){

@@ -174,9 +174,11 @@ public class SecuXPaymentManagerBase {
         handlePaymentStatus(mPaymentInfo.mToken + " transferring...");
         Pair<Integer, String> payRet = mSecuXSvrReqHandler.doPayment(mAccount.mAccountName, mPaymentDevConfigInfo.mName, mPaymentInfo);
         if (payRet.first == SecuXServerRequestHandler.SecuXRequestUnauthorized){
+            mPaymentPeripheralManager.requestDisconnect();
             handleAccountUnauthorized();
             return;
         }else if (payRet.first != SecuXServerRequestHandler.SecuXRequestOK){
+            mPaymentPeripheralManager.requestDisconnect();
             handlePaymentDone(false, payRet.second);
             return;
         }
@@ -190,6 +192,7 @@ public class SecuXPaymentManagerBase {
             String statusDesc = payRetJson.getString("statusDesc");
 
             if (statusCode != 200){
+                mPaymentPeripheralManager.requestDisconnect();
                 handlePaymentDone(false, statusDesc);
                 return;
             }
@@ -249,6 +252,7 @@ public class SecuXPaymentManagerBase {
 
         }catch (Exception e){
             Log.e(TAG, e.getLocalizedMessage());
+            mPaymentPeripheralManager.requestDisconnect();
             handlePaymentDone(false, mPaymentInfo.mCoinType.toString() + " transfer failed!");
         }
     }
