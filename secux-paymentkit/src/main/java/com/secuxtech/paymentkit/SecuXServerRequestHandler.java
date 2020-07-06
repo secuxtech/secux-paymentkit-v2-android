@@ -13,23 +13,42 @@ import org.json.JSONObject;
 public class SecuXServerRequestHandler extends RestRequestHandler {
 
     static String baseURL = "https://pmsweb-test.secux.io"; //https://pmsweb-sandbox.secuxtech.com";
-    static final String adminLoginUrl = baseURL + "/api/Admin/Login";
-    static final String registerUrl = baseURL + "/api/Consumer/Register";
-    static final String userLoginUrl = baseURL + "/api/Consumer/Login";
-    static final String changePwdUrl = baseURL + "/api/Consumer/ChangePassword";
-    static final String transferUrl = baseURL + "/api/Consumer/Transfer";
-    static final String balanceUrl = baseURL + "/api/Consumer/GetAccountBalance";
-    static final String balanceListUrl = baseURL + "/api/Consumer/GetAccountBalanceList";
-    static final String paymentUrl = baseURL + "/api/Consumer/Payment";
-    static final String paymentHistoryUrl = baseURL + "/api/Consumer/GetPaymentHistory";
-    static final String getStoreUrl = baseURL + "/api/Terminal/GetStore";
-    static final String transferHistoryUrl = baseURL + "/api/Consumer/GetTxHistory";
-    static final String getDeviceInfoUrl = baseURL + "/api/Terminal/GetDeviceInfo";
-    static final String getSupportedSymbolUrl = baseURL + "/api/Terminal/GetSupportedSymbol";
-    static final String getChainAccountListUrl = baseURL + "/api/Consumer/GetChainAccountList";
-    static final String accountOperationUrl = baseURL +  "/api/Consumer/BindingChainAccount";
+    static String adminLoginUrl = baseURL + "/api/Admin/Login";
+    static String registerUrl = baseURL + "/api/Consumer/Register";
+    static String userLoginUrl = baseURL + "/api/Consumer/Login";
+    static String changePwdUrl = baseURL + "/api/Consumer/ChangePassword";
+    static String transferUrl = baseURL + "/api/Consumer/Transfer";
+    static String balanceUrl = baseURL + "/api/Consumer/GetAccountBalance";
+    static String balanceListUrl = baseURL + "/api/Consumer/GetAccountBalanceList";
+    static String paymentUrl = baseURL + "/api/Consumer/Payment";
+    static String paymentHistoryUrl = baseURL + "/api/Consumer/GetPaymentHistory";
+    static String getStoreUrl = baseURL + "/api/Terminal/GetStore";
+    static String transferHistoryUrl = baseURL + "/api/Consumer/GetTxHistory";
+    static String getDeviceInfoUrl = baseURL + "/api/Terminal/GetDeviceInfo";
+    static String getSupportedSymbolUrl = baseURL + "/api/Terminal/GetSupportedSymbol";
+    static String getChainAccountListUrl = baseURL + "/api/Consumer/GetChainAccountList";
+    static String accountOperationUrl = baseURL +  "/api/Consumer/BindingChainAccount";
 
     private static String mToken = "";
+
+    public static void setServerURL(String svrUrl){
+        baseURL = svrUrl;
+        adminLoginUrl = baseURL + "/api/Admin/Login";
+        registerUrl = baseURL + "/api/Consumer/Register";
+        userLoginUrl = baseURL + "/api/Consumer/Login";
+        changePwdUrl = baseURL + "/api/Consumer/ChangePassword";
+        transferUrl = baseURL + "/api/Consumer/Transfer";
+        balanceUrl = baseURL + "/api/Consumer/GetAccountBalance";
+        balanceListUrl = baseURL + "/api/Consumer/GetAccountBalanceList";
+        paymentUrl = baseURL + "/api/Consumer/Payment";
+        paymentHistoryUrl = baseURL + "/api/Consumer/GetPaymentHistory";
+        getStoreUrl = baseURL + "/api/Terminal/GetStore";
+        transferHistoryUrl = baseURL + "/api/Consumer/GetTxHistory";
+        getDeviceInfoUrl = baseURL + "/api/Terminal/GetDeviceInfo";
+        getSupportedSymbolUrl = baseURL + "/api/Terminal/GetSupportedSymbol";
+        getChainAccountListUrl = baseURL + "/api/Consumer/GetChainAccountList";
+        accountOperationUrl = baseURL +  "/api/Consumer/BindingChainAccount";
+    }
 
     public String getAdminToken(){
         Log.i(TAG, "getAdminToken");
