@@ -10,6 +10,7 @@ import androidx.core.util.Pair;
 import org.json.JSONObject;
 
 
+
 public class SecuXServerRequestHandler extends RestRequestHandler {
 
     static String baseURL = "https://pmsweb-test.secux.io"; //https://pmsweb-sandbox.secuxtech.com";
@@ -28,6 +29,8 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
     static String getSupportedSymbolUrl = baseURL + "/api/Terminal/GetSupportedSymbol";
     static String getChainAccountListUrl = baseURL + "/api/Consumer/GetChainAccountList";
     static String accountOperationUrl = baseURL +  "/api/Consumer/BindingChainAccount";
+    static String refundUrl = baseURL + "/api/B2B/Refund";
+    static String refillUrl = baseURL + "/api/B2B/Refill";
 
     private static String mToken = "";
 
@@ -48,6 +51,8 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
         getSupportedSymbolUrl = baseURL + "/api/Terminal/GetSupportedSymbol";
         getChainAccountListUrl = baseURL + "/api/Consumer/GetChainAccountList";
         accountOperationUrl = baseURL +  "/api/Consumer/BindingChainAccount";
+        refundUrl = baseURL + "/api/B2B/Refund";
+        refillUrl = baseURL + "/api/B2B/Refill";
     }
 
     public String getAdminToken(){
@@ -430,4 +435,6 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
         }
     }
+
+
 }
