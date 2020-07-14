@@ -5,7 +5,8 @@ package com.secuxtech.paymentkit;
  */
 
 import android.util.Log;
-import androidx.core.util.Pair;
+import android.util.Pair;
+
 
 import org.json.JSONObject;
 
@@ -29,8 +30,8 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
     static String getSupportedSymbolUrl = baseURL + "/api/Terminal/GetSupportedSymbol";
     static String getChainAccountListUrl = baseURL + "/api/Consumer/GetChainAccountList";
     static String accountOperationUrl = baseURL +  "/api/Consumer/BindingChainAccount";
-    static String refundUrl = baseURL + "/api/B2B/Refund";
-    static String refillUrl = baseURL + "/api/B2B/Refill";
+    static String refundUrl = baseURL + "/api/Consumer/Refund";
+    static String refillUrl = baseURL + "/api/Consumer/Refill";
 
     private static String mToken = "";
 
@@ -51,8 +52,8 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
         getSupportedSymbolUrl = baseURL + "/api/Terminal/GetSupportedSymbol";
         getChainAccountListUrl = baseURL + "/api/Consumer/GetChainAccountList";
         accountOperationUrl = baseURL +  "/api/Consumer/BindingChainAccount";
-        refundUrl = baseURL + "/api/B2B/Refund";
-        refillUrl = baseURL + "/api/B2B/Refill";
+        refundUrl = baseURL + "/api/Consumer/Refund";
+        refillUrl = baseURL + "/api/Consumer/Refill";
     }
 
     public String getAdminToken(){
@@ -436,5 +437,60 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
         }
     }
 
+    public Pair<Integer, String> refund(String devIDHash, String ivKey, String dataHash){
+        /*
+            "deviceIDhash": "592e41d67ee326f82fd6be518fd488d752f5a1b9",
+	        "ivKey": "GfJasMOeUhJ6PvJh",
+	        "hashTx": "pM4IcNRf7NbaNQ9OPoxjwM3zt7heM4yffG+1TQiawus="
+         */
+
+        if (mToken.length()==0){
+            Log.e(TAG, "No token");
+            return new Pair<>(SecuXRequestFailed, "No token");
+        }
+
+        try{
+            JSONObject param = new JSONObject();
+            param.put("deviceIDhash", devIDHash);
+            param.put("ivKey", ivKey);
+            param.put("hashTx", dataHash);
+
+            Pair<Integer, String> response = this.processPostRequest(refundUrl, param, mToken);
+            return response;
+
+        }catch (Exception e){
+            Log.e(TAG, e.getMessage());
+            return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
+        }
+
+    }
+
+    public Pair<Integer, String> refill(String devIDHash, String ivKey, String dataHash){
+        /*
+            "deviceIDhash": "592e41d67ee326f82fd6be518fd488d752f5a1b9",
+	        "ivKey": "GfJasMOeUhJ6PvJh",
+	        "hashTx": "pM4IcNRf7NbaNQ9OPoxjwM3zt7heM4yffG+1TQiawus="
+         */
+
+        if (mToken.length()==0){
+            Log.e(TAG, "No token");
+            return new Pair<>(SecuXRequestFailed, "No token");
+        }
+
+        try{
+            JSONObject param = new JSONObject();
+            param.put("deviceIDhash", devIDHash);
+            param.put("ivKey", ivKey);
+            param.put("hashTx", dataHash);
+
+            Pair<Integer, String> response = this.processPostRequest(refillUrl, param, mToken);
+            return response;
+
+        }catch (Exception e){
+            Log.e(TAG, e.getMessage());
+            return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
+        }
+
+    }
 
 }

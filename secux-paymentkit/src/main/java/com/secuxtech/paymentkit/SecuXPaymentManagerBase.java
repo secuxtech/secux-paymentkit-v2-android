@@ -12,9 +12,7 @@ import android.graphics.BitmapFactory;
 import android.os.SystemClock;
 import android.util.Base64;
 import android.util.Log;
-
-
-import androidx.core.util.Pair;
+import android.util.Pair;
 
 import org.json.JSONObject;
 
@@ -68,7 +66,7 @@ public class SecuXPaymentManagerBase {
     protected Context mContext = null;
 
     protected SecuXServerRequestHandler mSecuXSvrReqHandler = new SecuXServerRequestHandler();
-    private PaymentPeripheralManager mPaymentPeripheralManager = new PaymentPeripheralManager(mContext, 10, -80, 10);
+    protected PaymentPeripheralManager mPaymentPeripheralManager = new PaymentPeripheralManager(mContext, 10, -80, 30);
 
     private SecuXUserAccount mAccount = null;
     private PaymentInfo mPaymentInfo = new PaymentInfo();
@@ -124,7 +122,7 @@ public class SecuXPaymentManagerBase {
             Log.i(TAG, "pay to device " + mPaymentInfo.mDevID);
             handlePaymentStatus("Device connecting ...");
 
-            android.util.Pair<Integer, String> ret = mPaymentPeripheralManager.doGetIVKey(mContext, mPaymentDevConfigInfo.mScanTimeout,
+            Pair<Integer, String> ret = mPaymentPeripheralManager.doGetIVKey(mContext, mPaymentDevConfigInfo.mScanTimeout,
                     mPaymentInfo.mDevID, mPaymentDevConfigInfo.mRssi, mPaymentDevConfigInfo.mConnTimeout);
             if (ret.first == SecuX_Peripheral_Operation_OK){
                 mPaymentInfo.mIVKey = ret.second;
@@ -165,6 +163,65 @@ public class SecuXPaymentManagerBase {
             return false;
         }
         return true;
+    }
+
+    protected Pair<Integer, String> sendRefundOrRefillInfoToDevice(String info){
+
+        Log.i(TAG, SystemClock.uptimeMillis() + " sendRefundOrRefillInfoToDevice " + info);
+        Pair<Integer, String> ret = new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Unknown error");
+        try {
+
+            JSONObject payRetJson = new JSONObject(info);
+            int statusCode = payRetJson.getInt("statusCode");
+            String statusDesc = payRetJson.getString("statusDesc");
+
+            if (statusCode != 200){
+                mPaymentPeripheralManager.requestDisconnect();
+                return new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Invalid status code!");
+            }
+
+            String ioControlParams = payRetJson.getString("machineControlParam");
+            JSONObject ioCtrlParamJson = new JSONObject(ioControlParams);
+
+            final MachineIoControlParam machineIoControlParam=new MachineIoControlParam();
+            machineIoControlParam.setGpio1(ioCtrlParamJson.getString("gpio1"));
+            machineIoControlParam.setGpio2(ioCtrlParamJson.getString("gpio2"));
+            machineIoControlParam.setGpio31(ioCtrlParamJson.getString("gpio31"));
+            machineIoControlParam.setGpio32(ioCtrlParamJson.getString("gpio32"));
+            machineIoControlParam.setGpio4(ioCtrlParamJson.getString("gpio4"));
+            machineIoControlParam.setGpio4c(ioCtrlParamJson.getString("gpio4c"));
+            machineIoControlParam.setGpio4cCount(ioCtrlParamJson.getString("gpio4cCount"));
+            machineIoControlParam.setGpio4cInterval(ioCtrlParamJson.getString("gpio4cInterval"));
+            machineIoControlParam.setGpio4dOn(ioCtrlParamJson.getString("gpio4dOn"));
+            machineIoControlParam.setGpio4dOff(ioCtrlParamJson.getString("gpio4dOff"));
+            machineIoControlParam.setGpio4dInterval(ioCtrlParamJson.getString("gpio4dInterval"));
+            machineIoControlParam.setUart(ioCtrlParamJson.getString("uart"));
+            machineIoControlParam.setRunStatus(ioCtrlParamJson.getString("runStatus"));
+            machineIoControlParam.setLockStatus(ioCtrlParamJson.getString("lockStatus"));
+
+            String encryptedStr = payRetJson.getString("encryptedTransaction");
+            final byte[] encryptedData = Base64.decode(encryptedStr, Base64.DEFAULT);
+
+            String transCode = payRetJson.getString("transactionCode");
+
+
+            Pair<Integer, String> verifyRet = mPaymentPeripheralManager.doPaymentVerification(encryptedData, machineIoControlParam);
+            if (verifyRet.first == SecuX_Peripheral_Operation_OK){
+
+                ret = new Pair<>(SecuXServerRequestHandler.SecuXRequestOK, transCode);
+            }else{
+
+                ret = new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, verifyRet.second);
+            }
+
+
+        }catch (Exception e){
+            Log.e(TAG, e.getLocalizedMessage());
+            mPaymentPeripheralManager.requestDisconnect();
+
+            ret = new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Parsing server reply exception!");
+        }
+        return ret;
     }
 
     protected void sendInfoToDevice(){

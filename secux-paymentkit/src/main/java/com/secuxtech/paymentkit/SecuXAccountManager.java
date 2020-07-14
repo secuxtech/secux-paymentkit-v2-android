@@ -5,8 +5,8 @@ package com.secuxtech.paymentkit;
  */
 
 import android.util.Log;
+import android.util.Pair;
 
-import androidx.core.util.Pair;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

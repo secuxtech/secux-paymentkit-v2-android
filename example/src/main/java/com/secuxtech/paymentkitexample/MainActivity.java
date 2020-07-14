@@ -1,7 +1,6 @@
 package com.secuxtech.paymentkitexample;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.util.Pair;
 
 import android.Manifest;
 import android.content.Context;
@@ -12,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
+import android.util.Pair;
 import android.view.Gravity;
 import android.widget.Toast;
 

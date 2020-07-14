@@ -5,13 +5,15 @@ package com.secuxtech.paymentkit;
  */
 
 import android.content.Context;
+import android.util.Pair;
 
-import androidx.core.util.Pair;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import static com.secuxtech.paymentdevicekit.PaymentPeripheralManagerV1.SecuX_Peripheral_Operation_OK;
 
 public class SecuXPaymentManager extends SecuXPaymentManagerBase{
 
@@ -46,6 +48,8 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
         }).start();
 
     }
+
+
 
     public Pair<Integer, String> getDeviceInfo(String paymentInfo){
         return this.mSecuXSvrReqHandler.getDeviceInfo(paymentInfo);
@@ -86,4 +90,35 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
         }
         return ret;
     }
+
+
+    public Pair<Integer, String> doRefund(String devID, String devIDHash){
+        //return this.mSecuXSvrReqHandler.refund(devIDHash, ivKey, dataHash);
+
+        Pair<Integer, Pair<String, String>> ret = mPaymentPeripheralManager.getRefundRefillInfo(devID);
+        if (ret.first == SecuX_Peripheral_Operation_OK){
+            Pair<Integer, String> refundRet = this.mSecuXSvrReqHandler.refund(devIDHash, ret.second.second, ret.second.first);
+            if (refundRet.first == SecuXServerRequestHandler.SecuXRequestOK){
+                return sendRefundOrRefillInfoToDevice(refundRet.second);
+            }
+        }
+        return new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Get refund info. from device failed. Error: " + ret.second.first);
+    }
+
+    public Pair<Integer, String> doRefill(String devID, String devIDHash, String ivKey){
+        //return this.mSecuXSvrReqHandler.refill(devIDHash, ivKey, dataHash);
+
+        Pair<Integer, Pair<String, String>> ret = mPaymentPeripheralManager.getRefundRefillInfo(devID);
+        if (ret.first == SecuX_Peripheral_Operation_OK){
+            Pair<Integer, String> refillRet = this.mSecuXSvrReqHandler.refill(devIDHash, ret.second.second, ret.second.first);
+            if (refillRet.first == SecuXServerRequestHandler.SecuXRequestOK){
+                return sendRefundOrRefillInfoToDevice(refillRet.second);
+            }
+        }
+
+        return new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Get refill info. from device failed. Error: " + ret.second.first);
+    }
+
+
+
 }
