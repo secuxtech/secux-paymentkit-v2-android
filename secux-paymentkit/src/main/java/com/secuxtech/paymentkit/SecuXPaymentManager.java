@@ -5,6 +5,9 @@ package com.secuxtech.paymentkit;
  */
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
+import android.util.Log;
 import android.util.Pair;
 
 
@@ -14,6 +17,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import static com.secuxtech.paymentdevicekit.PaymentPeripheralManagerV1.SecuX_Peripheral_Operation_OK;
+import static com.secuxtech.paymentkit.RestRequestHandler.TAG;
 
 public class SecuXPaymentManager extends SecuXPaymentManagerBase{
 
@@ -21,6 +25,7 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
         this.mCallback = callback;
     }
 
+    /*
     public void getStoreInfo(final String devID){
         new Thread(new Runnable() {
             @Override
@@ -35,6 +40,25 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
             }
             }
         }).start();
+    }
+
+     */
+
+    public Pair<Pair<Integer, String>, SecuXStoreInfo> getStoreInfo(String devIDHash){
+        Pair<Integer, String> response = this.mSecuXSvrReqHandler.getStoreInfo(devIDHash);
+        if (response.first==SecuXServerRequestHandler.SecuXRequestOK) {
+            try {
+                SecuXStoreInfo storeInfo = new SecuXStoreInfo(new JSONObject(response.second));
+                return new Pair<>(response, storeInfo);
+
+            } catch (Exception e) {
+                Log.e(TAG, e.getLocalizedMessage());
+
+                return new Pair<>(new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Inavlid store info."), null);
+            }
+        }else{
+            return new Pair<>(response, null);
+        }
     }
 
     public void doPayment(Context context, final SecuXUserAccount account, final String storeInfo, final String paymentInfo){

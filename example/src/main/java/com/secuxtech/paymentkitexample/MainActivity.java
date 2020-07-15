@@ -164,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
         if (ret.first == SecuXServerRequestHandler.SecuXRequestOK) {
             //mPaymentManager.doRefund(mContext, "811c000009c5", "592e41d67ee326f82fd6be518fd488d752f5a1b9");
 
+            //Pair<Pair<Integer, String>, SecuXStoreInfo> storeInfo = mPaymentManager.getStoreInfo("592e41d67ee326f82fd6be518fd488d752f5a1b9");
             mPaymentManager.doRefill(mContext, "811c000009c5", "592e41d67ee326f82fd6be518fd488d752f5a1b9");
         }
     }

@@ -80,6 +80,7 @@ public class SecuXPaymentManagerBase {
         Log.i(TAG, "SecuXPaymentManagerBase");
     }
 
+    /*
     protected Integer getPaymentStoreInfo(String deviceID){
         Log.i(TAG, "getStoreInfo");
 
@@ -110,7 +111,7 @@ public class SecuXPaymentManagerBase {
 
         return SecuXServerRequestHandler.SecuXRequestFailed;
     }
-
+    */
 
     protected void doPayment(SecuXUserAccount account, String storeInfo, String paymentInfo){
 
