@@ -51,10 +51,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 //User account operations
-                mAccount = new SecuXUserAccount("maochuntest1@secuxtech.com", "12345678");
+                mAccount = new SecuXUserAccount("maochuntest2@secuxtech.com", "12345678");
 
                 //testAccount();
-                testPayment();
+                //testPayment();
+                testRefundRefill();
             }
         }).start();
     }
@@ -154,6 +155,16 @@ public class MainActivity extends AppCompatActivity {
                     Log.i(TAG, "Invalid store info "+e.getLocalizedMessage());
                 }
             }
+        }
+    }
+
+
+    public void testRefundRefill() {
+        Pair<Integer, String> ret = mAccountManager.loginUserAccount(mAccount);
+        if (ret.first == SecuXServerRequestHandler.SecuXRequestOK) {
+            //mPaymentManager.doRefund(mContext, "811c000009c5", "592e41d67ee326f82fd6be518fd488d752f5a1b9");
+
+            mPaymentManager.doRefill(mContext, "811c000009c5", "592e41d67ee326f82fd6be518fd488d752f5a1b9");
         }
     }
 

@@ -92,10 +92,10 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
     }
 
 
-    public Pair<Integer, String> doRefund(String devID, String devIDHash){
+    public Pair<Integer, String> doRefund(Context context, String devID, String devIDHash){
         //return this.mSecuXSvrReqHandler.refund(devIDHash, ivKey, dataHash);
-
-        Pair<Integer, Pair<String, String>> ret = mPaymentPeripheralManager.getRefundRefillInfo(devID);
+        this.mContext = context;
+        Pair<Integer, Pair<String, String>> ret = mPaymentPeripheralManager.getRefundRefillInfo(context, devID);
         if (ret.first == SecuX_Peripheral_Operation_OK){
             Pair<Integer, String> refundRet = this.mSecuXSvrReqHandler.refund(devIDHash, ret.second.second, ret.second.first);
             if (refundRet.first == SecuXServerRequestHandler.SecuXRequestOK){
@@ -105,10 +105,10 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
         return new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Get refund info. from device failed. Error: " + ret.second.first);
     }
 
-    public Pair<Integer, String> doRefill(String devID, String devIDHash, String ivKey){
+    public Pair<Integer, String> doRefill(Context context, String devID, String devIDHash){
         //return this.mSecuXSvrReqHandler.refill(devIDHash, ivKey, dataHash);
-
-        Pair<Integer, Pair<String, String>> ret = mPaymentPeripheralManager.getRefundRefillInfo(devID);
+        this.mContext = context;
+        Pair<Integer, Pair<String, String>> ret = mPaymentPeripheralManager.getRefundRefillInfo(context, devID);
         if (ret.first == SecuX_Peripheral_Operation_OK){
             Pair<Integer, String> refillRet = this.mSecuXSvrReqHandler.refill(devIDHash, ret.second.second, ret.second.first);
             if (refillRet.first == SecuXServerRequestHandler.SecuXRequestOK){
@@ -118,7 +118,5 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
 
         return new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Get refill info. from device failed. Error: " + ret.second.first);
     }
-
-
 
 }

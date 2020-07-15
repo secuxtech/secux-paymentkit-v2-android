@@ -454,7 +454,7 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             param.put("deviceIDhash", devIDHash);
             param.put("ivKey", ivKey);
             param.put("hashTx", dataHash);
-
+            Log.i(TAG, "Refund param " + param.toString());
             Pair<Integer, String> response = this.processPostRequest(refundUrl, param, mToken);
             return response;
 
@@ -482,7 +482,7 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             param.put("deviceIDhash", devIDHash);
             param.put("ivKey", ivKey);
             param.put("hashTx", dataHash);
-
+            Log.i(TAG, "Refill param: " + param.toString());
             Pair<Integer, String> response = this.processPostRequest(refillUrl, param, mToken);
             return response;
 
