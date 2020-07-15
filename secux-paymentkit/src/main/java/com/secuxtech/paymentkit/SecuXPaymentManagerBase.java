@@ -315,12 +315,6 @@ public class SecuXPaymentManagerBase {
         }
     }
 
-    protected void handleGetStoreInfoDone(final boolean ret){
-        Log.i(TAG, "Get store info. done " + String.valueOf(ret) + " " + mStoreInfo);
-        if (mCallback!=null){
-            mCallback.getStoreInfoDone(ret, mStoreInfo, mStoreLogo);
-        }
-    }
 
     protected void handlePaymentStatus(final String status){
         Log.i(TAG, "Payment status " + status);

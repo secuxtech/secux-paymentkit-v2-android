@@ -16,9 +16,6 @@ public abstract class SecuXPaymentManagerCallback {
 
     }
 
-    public void getStoreInfoDone(final boolean ret, final String storeInfo, final Bitmap storeLogo){
-
-    }
 
     public void userAccountUnauthorized(){
 

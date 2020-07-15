@@ -12,6 +12,7 @@ public class SecuXStoreInfo {
     public String mName = "";
     public String mDevID = "";
     public Bitmap mLogo = null;
+    public String mInfo = "";
 
     SecuXStoreInfo(JSONObject storeInfoJson) throws Exception{
         try{
@@ -22,6 +23,9 @@ public class SecuXStoreInfo {
             mCode = storeInfoJson.getString("storeCode");
             mName = storeInfoJson.getString("name");
             mDevID = storeInfoJson.getString("deviceId");
+
+            storeInfoJson.remove("icon");
+            mInfo = storeInfoJson.toString();
 
         }catch (Exception e){
             throw e;

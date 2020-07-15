@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
         if (ret.first == SecuXServerRequestHandler.SecuXRequestOK) {
             //mPaymentManager.doRefund(mContext, "811c000009c5", "592e41d67ee326f82fd6be518fd488d752f5a1b9");
 
-            //Pair<Pair<Integer, String>, SecuXStoreInfo> storeInfo = mPaymentManager.getStoreInfo("592e41d67ee326f82fd6be518fd488d752f5a1b9");
+            Pair<Pair<Integer, String>, SecuXStoreInfo> storeInfo = mPaymentManager.getStoreInfo("592e41d67ee326f82fd6be518fd488d752f5a1b9");
             mPaymentManager.doRefill(mContext, "811c000009c5", "592e41d67ee326f82fd6be518fd488d752f5a1b9");
         }
     }
@@ -217,32 +217,6 @@ public class MainActivity extends AppCompatActivity {
             Log.i("secux-paymentkit-exp", "Update payment status: " + status);
         }
 
-        //Called when get store information is completed. Returns store name and store logo.
-        @Override
-        public void getStoreInfoDone(final boolean ret, final String storeInfo, final Bitmap storeLogo){
-            Log.i("secux-paymentkit-exp", "Get store info. done ret=" + String.valueOf(ret) + ",info=" + storeInfo);
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    if (ret){
-                        //final String name = storeName;
-                        mPaymentManager.doPayment(mContext, mAccount, storeInfo, mPaymentInfo);
-
-                    }else{
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast toast = Toast.makeText(mContext, "Get store info. failed!", Toast.LENGTH_LONG);
-                                toast.setGravity(Gravity.CENTER,0,0);
-                                toast.show();
-                            }
-                        });
-                    }
-                }
-            }).start();
-
-        }
 
         //Called when the user login account token is timeout. Just login in the account again.
         @Override
