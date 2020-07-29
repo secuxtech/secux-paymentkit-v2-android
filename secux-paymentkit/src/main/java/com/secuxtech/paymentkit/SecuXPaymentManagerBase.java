@@ -35,6 +35,7 @@ import com.secux.payment.sdk.listener.OnSendStringCompleteListener;
 import com.secuxtech.paymentdevicekit.MachineIoControlParam;
 import com.secuxtech.paymentdevicekit.PaymentPeripheralManager;
 import com.secuxtech.paymentdevicekit.SecuXBLEManager;
+import com.secuxtech.paymentdevicekit.SecuXPaymentUtility;
 
 
 import java.util.ArrayList;
@@ -124,6 +125,32 @@ public class SecuXPaymentManagerBase {
             handlePaymentStatus("Device connecting ...");
 
             Pair<Integer, String> ret = mPaymentPeripheralManager.doGetIVKey(mContext, mPaymentDevConfigInfo.mScanTimeout,
+                    mPaymentInfo.mDevID, mPaymentDevConfigInfo.mRssi, mPaymentDevConfigInfo.mConnTimeout);
+            if (ret.first == SecuX_Peripheral_Operation_OK){
+                mPaymentInfo.mIVKey = ret.second;
+                sendInfoToDevice();
+            }else{
+                handlePaymentDone(false, ret.second);
+            }
+
+        }else {
+            handlePaymentDone(false, "Wrong payment information");
+        }
+
+    }
+
+    protected void doPayment(String nonce, SecuXUserAccount account, String storeInfo, String paymentInfo){
+
+        Log.i(TAG, "doPayment");
+
+        this.mAccount = account;
+
+        if (getPaymentInfo(paymentInfo) && getPaymentDevConfigInfo(storeInfo)){
+            Log.i(TAG, "pay to device " + mPaymentInfo.mDevID);
+            handlePaymentStatus("Device connecting ...");
+
+            byte[] code = SecuXPaymentUtility.hexStringToData(nonce);
+            Pair<Integer, String> ret = mPaymentPeripheralManager.doGetIVKey(code, mContext, mPaymentDevConfigInfo.mScanTimeout,
                     mPaymentInfo.mDevID, mPaymentDevConfigInfo.mRssi, mPaymentDevConfigInfo.mConnTimeout);
             if (ret.first == SecuX_Peripheral_Operation_OK){
                 mPaymentInfo.mIVKey = ret.second;
