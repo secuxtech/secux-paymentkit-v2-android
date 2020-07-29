@@ -333,28 +333,35 @@ Use SecuXPaymentManager object to do the operations below
 3. <b>Get store information</b>
 #### <u>Declaration</u>
 ```java
-    void getStoreInfo(final String devID)
+    Pair<Pair<Integer, String>, SecuXStoreInfo> getStoreInfo(String devIDHash)
 ```
 #### <u>Parameter</u>
 ```
     devID: Hashed device ID from getDeviceInfo function
 ```
-#### <u>Remark</u>
+#### <u>Return value</u>
 ```
-    An asynchronized function. The result is in the callback function getStoreInfoDone
+    The first return value shows the operation result. If the result is SecuXRequestOK, 
+    getting store information is successful, the second SecuXStoreInfo contrains store 
+    information, otherwise the first return string value contains an error message.
+
+    Note: if the first return result is SecuXRequestUnauthorized, 
+    the login session is timeout, please relogin the system.
+
 ```
 #### <u>Sample</u>
 ```java
-    mPaymentManager.getStoreInfo("f962639145992d7a710d33dcca503575eb85d759");
+    Pair<Pair<Integer, String>, SecuXStoreInfo> storeInfoRet = mPaymentManager.getStoreInfo(mDevIDhash);
 ```
 4. <b>Do payment</b>
 #### <u>Declaration</u>
 ```java
-    doPayment(Context context, final SecuXUserAccount account, final String storeInfo, 
+    doPayment(String nonce, Context context, final SecuXUserAccount account, final String storeInfo, 
               final String paymentInfo)
 ```
 #### <u>Parameter</u>
 ```
+    nonce:       The payment nonce from the P22 payment QRCode
     context:     The current activity context.
     account:     The login user account.
     storeInfo:   Store information JSON string from getStoreInfoDone callback function.

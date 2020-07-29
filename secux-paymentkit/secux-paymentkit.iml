@@ -126,6 +126,6 @@
     <orderEntry type="library" name="Gradle: androidx.lifecycle:lifecycle-livedata:2.0.0@aar" level="project" />
     <orderEntry type="library" name="Gradle: androidx.lifecycle:lifecycle-livedata-core:2.0.0@aar" level="project" />
     <orderEntry type="library" name="Gradle: androidx.arch.core:core-runtime:2.0.0@aar" level="project" />
-    <orderEntry type="library" name="Gradle: com.github.secuxtech:secux-paymentdevicekit-v2-android:1.1.2@aar" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.secuxtech:secux-paymentdevicekit-v2-android:1.1.4@aar" level="project" />
   </component>
 </module>
