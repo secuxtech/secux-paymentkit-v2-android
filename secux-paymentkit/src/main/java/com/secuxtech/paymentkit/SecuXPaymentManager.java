@@ -73,6 +73,17 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
 
     }
 
+    public void doPayment(final String nonce, Context context, final SecuXUserAccount account, final String storeInfo, final String paymentInfo){
+        this.mContext = context;
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                doPayment(nonce, account, storeInfo, paymentInfo);
+            }
+        }).start();
+
+    }
 
 
     public Pair<Integer, String> getDeviceInfo(String paymentInfo){
