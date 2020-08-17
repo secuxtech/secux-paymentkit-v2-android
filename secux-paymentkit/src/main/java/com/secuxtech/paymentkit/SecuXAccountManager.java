@@ -107,6 +107,25 @@ public class SecuXAccountManager {
         return response;
     }
 
+
+    public Pair<Integer, String> loginMerchantAccount(String accountName, String accountPwd){
+        Pair<Integer, String>  response = mSecuXSvrReqHandler.merchantLogin(accountName, accountPwd);
+        if (response.first==SecuXServerRequestHandler.SecuXRequestOK) {
+            try {
+                JSONObject responseJson = new JSONObject(response.second);
+                //String coinType = responseJson.getString("coinType");
+                //String token = responseJson.getString("symbol");
+
+                return new Pair<>(SecuXServerRequestHandler.SecuXRequestOK, "");
+
+            } catch (Exception e) {
+                return new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Invalid return value");
+            }
+        }
+
+        return response;
+    }
+
     public Pair<Integer, String> getSupportedCointokenArray(List<Pair<String, String>> coinTokenList){
         Pair<Integer, String> response = this.mSecuXSvrReqHandler.getSupportedCoinTokens();
         if (response.first == SecuXServerRequestHandler.SecuXRequestOK){

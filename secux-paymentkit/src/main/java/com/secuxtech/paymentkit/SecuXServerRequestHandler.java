@@ -32,6 +32,7 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
     static String accountOperationUrl = baseURL +  "/api/Consumer/BindingChainAccount";
     static String refundUrl = baseURL + "/api/Consumer/Refund";
     static String refillUrl = baseURL + "/api/Consumer/Refill";
+    static String encryptPaymentDataUrl = baseURL + "/api/B2B/ProduceCipher";
 
     private static String mToken = "";
 
@@ -54,6 +55,7 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
         accountOperationUrl = baseURL +  "/api/Consumer/BindingChainAccount";
         refundUrl = baseURL + "/api/Consumer/Refund";
         refillUrl = baseURL + "/api/Consumer/Refill";
+        encryptPaymentDataUrl = baseURL + "/api/B2B/ProduceCipher";
     }
 
     public String getAdminToken(){
@@ -140,6 +142,30 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             param.put("account", account);
             param.put("password", pwd);
             Pair<Integer, String> response = this.processPostRequest(userLoginUrl, param);
+            if (response.first==SecuXRequestOK){
+                JSONObject responseJson = new JSONObject(response.second);
+                String token = responseJson.getString("token");
+                mToken = token;
+            }
+
+            Log.i(TAG, response.second);
+            return response;
+
+        }catch (Exception e){
+            Log.e(TAG, e.getMessage());
+
+            return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
+        }
+    }
+
+    public Pair<Integer, String> merchantLogin(String account, String pwd){
+        Log.i(TAG, "merchantLogin");
+
+        try{
+            JSONObject param = new JSONObject();
+            param.put("account", account);
+            param.put("password", pwd);
+            Pair<Integer, String> response = this.processPostRequest(adminLoginUrl, param);
             if (response.first==SecuXRequestOK){
                 JSONObject responseJson = new JSONObject(response.second);
                 String token = responseJson.getString("token");
@@ -491,6 +517,32 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
         }
 
+    }
+
+    public Pair<Integer, String> encryptPaymentData(String sender, String devID, String ivKey, String coin, String token, String transID, String amount){
+        if (mToken.length()==0){
+            Log.e(TAG, "No token");
+            return new Pair<>(SecuXRequestFailed, "No token");
+        }
+
+        try{
+            JSONObject param = new JSONObject();
+            param.put("ivKey", ivKey);
+            param.put("coinType", coin);
+            param.put("symbol", token);
+            param.put("sender", sender);
+            param.put("deviceId", devID);
+            param.put("transactionId", transID);
+            param.put("amount", amount);
+
+            Log.i(TAG, "encryptPaymentData param: " + param.toString());
+            Pair<Integer, String> response = this.processPostRequest(encryptPaymentDataUrl, param, mToken);
+            return response;
+
+        }catch (Exception e){
+            Log.e(TAG, e.getMessage());
+            return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
+        }
     }
 
 }

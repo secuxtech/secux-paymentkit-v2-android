@@ -30,6 +30,7 @@ class RestRequestHandler {
     public static final Integer SecuXRequestOK = 0;
     public static final Integer SecuXRequestFailed = 1;
     public static final Integer SecuXRequestUnauthorized = 2;
+    public static final Integer SecuXRequestForbiddened = 3;
 
     public void processURLRequest(){
 
@@ -133,6 +134,16 @@ class RestRequestHandler {
                 if (mLogReply) {
                     Log.i(TAG, response);
                 }
+            }else if (responseCode == HttpsURLConnection.HTTP_UNAUTHORIZED){
+
+                response = "Unauthorized";
+                result = SecuXRequestUnauthorized;
+
+            }else if (responseCode == HttpsURLConnection.HTTP_FORBIDDEN){
+
+                response = "Forbidden operation";
+                result = SecuXRequestForbiddened;
+
             }else{
                 InputStream errIn = connection.getErrorStream();
                 response = getResponse(errIn);
@@ -182,6 +193,16 @@ class RestRequestHandler {
                 if (mLogReply) {
                     Log.i(TAG, response);
                 }
+
+            }else if (responseCode == HttpsURLConnection.HTTP_UNAUTHORIZED){
+
+                response = "Unauthorized";
+                result = SecuXRequestUnauthorized;
+
+            }else if (responseCode == HttpsURLConnection.HTTP_FORBIDDEN){
+
+                response = "Forbidden operation";
+                result = SecuXRequestForbiddened;
 
             }else{
                 InputStream errIn = connection.getErrorStream();
@@ -248,8 +269,15 @@ class RestRequestHandler {
                     Log.i(TAG, response);
                 }
             }else if (responseCode == HttpsURLConnection.HTTP_UNAUTHORIZED){
+
                 response = "Unauthorized";
                 result = SecuXRequestUnauthorized;
+
+            }else if (responseCode == HttpsURLConnection.HTTP_FORBIDDEN){
+
+                response = "Forbidden operation";
+                result = SecuXRequestForbiddened;
+
             }else{
                 InputStream errIn = connection.getErrorStream();
                 response = getResponse(errIn);

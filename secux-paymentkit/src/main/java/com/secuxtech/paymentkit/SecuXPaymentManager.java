@@ -6,10 +6,14 @@ package com.secuxtech.paymentkit;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.os.SystemClock;
 import android.util.Base64;
 import android.util.Log;
 import android.util.Pair;
 
+
+import com.secuxtech.paymentdevicekit.MachineIoControlParam;
+import com.secuxtech.paymentdevicekit.SecuXPaymentUtility;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,6 +21,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import static com.secuxtech.paymentdevicekit.PaymentPeripheralManagerV1.SecuX_Peripheral_Operation_OK;
+import static com.secuxtech.paymentkit.RestRequestHandler.SecuXRequestFailed;
+import static com.secuxtech.paymentkit.RestRequestHandler.SecuXRequestOK;
 import static com.secuxtech.paymentkit.RestRequestHandler.TAG;
 
 public class SecuXPaymentManager extends SecuXPaymentManagerBase{
@@ -154,4 +160,56 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
         return new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Get refill info. from device failed. Error: " + ret.second.first);
     }
 
+
+    public Pair<Integer, String> doActivity(Context context, String userID, String devID, String coin, String token, String transID, String amount, String nonce){
+        byte[] code = SecuXPaymentUtility.hexStringToData(nonce);
+        //Pair<Integer, String> ret = mPaymentPeripheralManager.doGetIVKey(code, context, 10,
+        //                                                                devID, -75, 30);
+
+        Pair<Integer, String> ret = mPaymentPeripheralManager.doGetIVKey(context, 10,
+                                                                    devID, -75, 30);
+        if (ret.first == SecuX_Peripheral_Operation_OK){
+            String ivKey = ret.second;
+
+            Pair<Integer, String> encRet = mSecuXSvrReqHandler.encryptPaymentData(userID, devID, ivKey, coin, token, transID, amount);
+            if (encRet.first == SecuXRequestOK){
+                try {
+
+                    JSONObject payRetJson = new JSONObject(encRet.second);
+                    Log.i(TAG, SystemClock.uptimeMillis() + " Send server request done " + payRetJson.toString());
+
+                    int statusCode = payRetJson.getInt("statusCode");
+                    String statusDesc = payRetJson.getString("statusDesc");
+
+                    if (statusCode != 200){
+                        mPaymentPeripheralManager.requestDisconnect();
+                        return new Pair<>(SecuXRequestFailed, "Invalide reply status code " + statusCode);
+                    }
+
+                    String encryptedStr = payRetJson.getString("encryptedText");
+                    final byte[] encryptedData = Base64.decode(encryptedStr, Base64.DEFAULT);
+
+                    //String transCode = payRetJson.getString("transactionCode");
+
+                    android.util.Pair<Integer, String> verifyRet = mPaymentPeripheralManager.doPaymentVerification(encryptedData);
+                    if (verifyRet.first == SecuX_Peripheral_Operation_OK){
+                        return new Pair<>(SecuXRequestOK, "");
+                    }else{
+                        return new Pair<>(SecuXRequestFailed, verifyRet.second);
+                    }
+
+
+                }catch (Exception e){
+                    Log.e(TAG, e.getLocalizedMessage());
+                    mPaymentPeripheralManager.requestDisconnect();
+                    return new Pair<>(SecuXRequestFailed, "Parsing encrypt data from server exception. " + encRet.second);
+                }
+            }
+
+            return encRet;
+        }
+
+        return new Pair<>(SecuXRequestFailed, ret.second);
+
+    }
 }
