@@ -278,6 +278,8 @@ class RestRequestHandler {
                 response = "Forbidden operation";
                 result = SecuXRequestForbiddened;
 
+                Log.e(TAG, "Server request: " + path + " param: " + paramStr + "  response code = " + response);
+
             }else{
                 InputStream errIn = connection.getErrorStream();
                 response = getResponse(errIn);
