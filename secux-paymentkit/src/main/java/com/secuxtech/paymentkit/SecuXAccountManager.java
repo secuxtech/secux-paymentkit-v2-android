@@ -26,6 +26,10 @@ public class SecuXAccountManager {
         SecuXServerRequestHandler.setServerURL(url);
     }
 
+    public String getBaseServer(){
+        return SecuXServerRequestHandler.baseURL;
+    }
+
     public Pair<Integer, String> registerUserAccount(SecuXUserAccount userAccount, String coinType, String token){
         Pair<Integer, String> response = mSecuXSvrReqHandler.userRegister(userAccount, coinType, token);
 
