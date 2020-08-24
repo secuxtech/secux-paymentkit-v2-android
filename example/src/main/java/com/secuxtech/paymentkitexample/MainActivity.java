@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
                 //testRefundRefill();
                 testSpringTreesAPIs();
 
+
             }
         }).start();
     }
@@ -174,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
     public void testSpringTreesAPIs(){
         Pair<Integer, String> ret = mAccountManager.loginMerchantAccount("secuxdemo", "secuxdemo168");
         if (ret.first == SecuXServerRequestHandler.SecuXRequestOK){
-            Pair<Pair<Integer, String>, SecuXStoreInfo> storeInfo = mPaymentManager.getStoreInfo("4afff62e0b314266d9e1b3a48158d56134331a9f");
+            Pair<Pair<Integer, String>, SecuXStoreInfo> storeInfo = mPaymentManager.getStoreInfo("592e41d67ee326f82fd6be518fd488d752f5a1b9");
             if (storeInfo.first.first == SecuXServerRequestHandler.SecuXRequestOK){
                 Pair<Integer, String> encRet = mPaymentManager.doActivity(mContext, "secuxdemo", storeInfo.second.mDevID,
                         "DCT", "SPC", "Test1234", "1", "9a7dc748");
