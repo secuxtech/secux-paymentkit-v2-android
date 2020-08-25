@@ -51,12 +51,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 //User account operations
-                mAccount = new SecuXUserAccount("maochuntest2@secuxtech.com", "12345678");
+                mAccount = new SecuXUserAccount("maochuntest1@secuxtech.com", "12345678");
 
                 //testAccount();
-                //testPayment();
+                testPayment();
                 //testRefundRefill();
-                testSpringTreesAPIs();
+                //testSpringTreesAPIs();
 
 
             }
@@ -143,8 +143,9 @@ public class MainActivity extends AppCompatActivity {
             mPaymentManager.setSecuXPaymentManagerCallback(mPaymentMgrCallback);
 
             //User SecuXPaymentManager to get valid payment info. from the QRCode string;
-            //ret = mPaymentManager.getDeviceInfo("{\"amount\":\"2\", \"coinType\":\"DCT:SPC\",\"deviceIDhash\":\"592e41d67ee326f82fd6be518fd488d752f5a1b9\"}");
-            ret = mPaymentManager.getDeviceInfo("{\"amount\":\"2\", \"coinType\":\"LBR:LBR\",\"deviceIDhash\":\"592e41d67ee326f82fd6be518fd488d752f5a1b9\"}");
+            String paymentInfo = "{\"amount\":\"2\", \"coinType\":\"DCT:SPC\",\"deviceIDhash\":\"4afff62e0b314266d9e1b3a48158d56134331a9f\"}";
+            ret = mPaymentManager.getDeviceInfo(paymentInfo);
+            //ret = mPaymentManager.getDeviceInfo("{\"amount\":\"2\", \"coinType\":\"LBR:LBR\",\"deviceIDhash\":\"592e41d67ee326f82fd6be518fd488d752f5a1b9\"}");
             if (ret.first==SecuXServerRequestHandler.SecuXRequestOK) {
 
                 try{
@@ -153,7 +154,10 @@ public class MainActivity extends AppCompatActivity {
                     mPaymentInfo = ret.second;
 
                     //Use SecuXPaymentManager to get store info.
-                    mPaymentManager.getStoreInfo(devID);
+                    Pair<Pair<Integer, String>, SecuXStoreInfo> storeInfoRet = mPaymentManager.getStoreInfo(devID);
+                    if (storeInfoRet.first.first == SecuXServerRequestHandler.SecuXRequestOK) {
+                        mPaymentManager.doPayment(mContext, mAccount, storeInfoRet.second.mInfo, ret.second);
+                    }
                 }catch (Exception e){
                     Log.i(TAG, "Invalid store info "+e.getLocalizedMessage());
                 }
@@ -175,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
     public void testSpringTreesAPIs(){
         Pair<Integer, String> ret = mAccountManager.loginMerchantAccount("secuxdemo", "secuxdemo168");
         if (ret.first == SecuXServerRequestHandler.SecuXRequestOK){
-            Pair<Pair<Integer, String>, SecuXStoreInfo> storeInfo = mPaymentManager.getStoreInfo("592e41d67ee326f82fd6be518fd488d752f5a1b9");
+            Pair<Pair<Integer, String>, SecuXStoreInfo> storeInfo = mPaymentManager.getStoreInfo("4afff62e0b314266d9e1b3a48158d56134331a9f");
             if (storeInfo.first.first == SecuXServerRequestHandler.SecuXRequestOK){
                 Pair<Integer, String> encRet = mPaymentManager.doActivity(mContext, "secuxdemo", storeInfo.second.mDevID,
                         "DCT", "SPC", "Test1234", "1", "9a7dc748");
