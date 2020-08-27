@@ -4,7 +4,6 @@ package com.secuxtech.paymentkit;
  * Created by maochuns.sun@gmail.com on 2020-02-03
  */
 
-import android.util.Log;
 import android.util.Pair;
 
 
@@ -23,6 +22,7 @@ public class SecuXAccountManager {
     private SecuXServerRequestHandler mSecuXSvrReqHandler = new SecuXServerRequestHandler();
 
     public void setBaseServer(String url){
+
         SecuXServerRequestHandler.setServerURL(url);
     }
 
@@ -31,6 +31,7 @@ public class SecuXAccountManager {
     }
 
     public Pair<Integer, String> registerUserAccount(SecuXUserAccount userAccount, String coinType, String token){
+
         Pair<Integer, String> response = mSecuXSvrReqHandler.userRegister(userAccount, coinType, token);
 
         if (response.first==SecuXServerRequestHandler.SecuXRequestOK){
@@ -64,6 +65,7 @@ public class SecuXAccountManager {
     }
 
     public Pair<Integer, String> loginUserAccount(SecuXUserAccount userAccount){
+
         Pair<Integer, String>  response = mSecuXSvrReqHandler.userLogin(userAccount.mAccountName, userAccount.mPassword);
         if (response.first==SecuXServerRequestHandler.SecuXRequestOK) {
             try {
@@ -113,6 +115,7 @@ public class SecuXAccountManager {
 
 
     public Pair<Integer, String> loginMerchantAccount(String accountName, String accountPwd){
+
         Pair<Integer, String>  response = mSecuXSvrReqHandler.merchantLogin(accountName, accountPwd);
         if (response.first==SecuXServerRequestHandler.SecuXRequestOK) {
             try {
@@ -131,6 +134,7 @@ public class SecuXAccountManager {
     }
 
     public Pair<Integer, String> getSupportedCointokenArray(List<Pair<String, String>> coinTokenList){
+
         Pair<Integer, String> response = this.mSecuXSvrReqHandler.getSupportedCoinTokens();
         if (response.first == SecuXServerRequestHandler.SecuXRequestOK){
             try{
@@ -141,7 +145,7 @@ public class SecuXAccountManager {
                     if (itemJsonArr.length() == 2){
                         coinTokenList.add(new Pair<String, String>(itemJsonArr.getString(0), itemJsonArr.getString(1)));
                     }else{
-                        Log.i(TAG, "Invalid coin token info.");
+                        SecuXPaymentKitLogHandler.Log("Invalid coin token info.");
                     }
                 }
 
@@ -158,6 +162,7 @@ public class SecuXAccountManager {
     }
 
     public Pair<Integer, String> getCoinAccountList(SecuXUserAccount userAccount){
+
         Pair<Integer, String> response = this.mSecuXSvrReqHandler.getChainAccountList();
         if (response.first == SecuXServerRequestHandler.SecuXRequestOK){
             try{
@@ -191,10 +196,12 @@ public class SecuXAccountManager {
     }
 
     public Pair<Integer, String> changePassword(String oldPwd, String newPwd) {
+
         return mSecuXSvrReqHandler.changePassword(oldPwd, newPwd);
     }
 
     public Pair<Integer, String> getAccountBalance(SecuXUserAccount userAccount, String coinType, String token){
+
         Pair<Integer, String>  response = this.mSecuXSvrReqHandler.getAccountBalance(coinType, token);
         if (response.first==SecuXServerRequestHandler.SecuXRequestOK) {
             try {
@@ -312,6 +319,7 @@ public class SecuXAccountManager {
     }
 
     public Pair<Integer, String> coinAccountOperation(String coinType, String accountName, String desc, String type){
+
         if (type.compareTo("Add")!=0 && type.compareTo("Binding")!=0 && type.compareTo("Unbind")!=0){
             return new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Invalid type");
         }

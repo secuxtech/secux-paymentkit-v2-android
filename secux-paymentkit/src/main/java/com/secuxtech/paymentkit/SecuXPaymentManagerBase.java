@@ -116,12 +116,12 @@ public class SecuXPaymentManagerBase {
 
     protected void doPayment(SecuXUserAccount account, String storeInfo, String paymentInfo){
 
-        Log.i(TAG, "doPayment");
+        SecuXPaymentKitLogHandler.Log("doPayment");
 
         this.mAccount = account;
 
         if (getPaymentInfo(paymentInfo) && getPaymentDevConfigInfo(storeInfo)){
-            Log.i(TAG, "pay to device " + mPaymentInfo.mDevID);
+            SecuXPaymentKitLogHandler.Log("pay to device " + mPaymentInfo.mDevID);
             handlePaymentStatus("Device connecting ...");
 
             Pair<Integer, String> ret = mPaymentPeripheralManager.doGetIVKey(mContext, mPaymentDevConfigInfo.mScanTimeout,
@@ -141,12 +141,12 @@ public class SecuXPaymentManagerBase {
 
     protected void doPayment(String nonce, SecuXUserAccount account, String storeInfo, String paymentInfo){
 
-        Log.i(TAG, "doPayment");
+        SecuXPaymentKitLogHandler.Log("doPayment");
 
         this.mAccount = account;
 
         if (getPaymentInfo(paymentInfo) && getPaymentDevConfigInfo(storeInfo)){
-            Log.i(TAG, "pay to device " + mPaymentInfo.mDevID);
+            SecuXPaymentKitLogHandler.Log("pay to device " + mPaymentInfo.mDevID);
             handlePaymentStatus("Device connecting ...");
 
             byte[] code = SecuXPaymentUtility.hexStringToData(nonce);
@@ -195,7 +195,7 @@ public class SecuXPaymentManagerBase {
 
     protected Pair<Integer, String> sendRefundOrRefillInfoToDevice(String info){
 
-        Log.i(TAG, SystemClock.uptimeMillis() + " sendRefundOrRefillInfoToDevice " + info);
+        SecuXPaymentKitLogHandler.Log(SystemClock.uptimeMillis() + " sendRefundOrRefillInfoToDevice " + info);
         Pair<Integer, String> ret = new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Unknown error");
         try {
 
@@ -244,7 +244,7 @@ public class SecuXPaymentManagerBase {
 
 
         }catch (Exception e){
-            Log.e(TAG, e.getLocalizedMessage());
+            SecuXPaymentKitLogHandler.Log(e.getLocalizedMessage());
             mPaymentPeripheralManager.requestDisconnect();
 
             ret = new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Parsing server reply exception!");
@@ -254,7 +254,7 @@ public class SecuXPaymentManagerBase {
 
     protected void sendInfoToDevice(){
 
-        Log.i(TAG, SystemClock.uptimeMillis() + " sendInfoToDevice amount=" + mPaymentInfo.mAmount);
+        SecuXPaymentKitLogHandler.Log(SystemClock.uptimeMillis() + " sendInfoToDevice amount=" + mPaymentInfo.mAmount);
 
         handlePaymentStatus(mPaymentInfo.mToken + " transferring...");
         Pair<Integer, String> payRet = mSecuXSvrReqHandler.doPayment(mAccount.mAccountName, mPaymentDevConfigInfo.mName, mPaymentInfo);
@@ -271,7 +271,7 @@ public class SecuXPaymentManagerBase {
         try {
 
             JSONObject payRetJson = new JSONObject(payRet.second);
-            Log.i(TAG, SystemClock.uptimeMillis() + " Send server request done " + payRetJson.toString());
+            SecuXPaymentKitLogHandler.Log(SystemClock.uptimeMillis() + " Send server request done " + payRetJson.toString());
 
             int statusCode = payRetJson.getInt("statusCode");
             String statusDesc = payRetJson.getString("statusDesc");
@@ -336,7 +336,7 @@ public class SecuXPaymentManagerBase {
              */
 
         }catch (Exception e){
-            Log.e(TAG, e.getLocalizedMessage());
+            SecuXPaymentKitLogHandler.Log( e.getLocalizedMessage());
             mPaymentPeripheralManager.requestDisconnect();
             handlePaymentDone(false, mPaymentInfo.mCoinType.toString() + " transfer failed!");
         }
@@ -344,14 +344,14 @@ public class SecuXPaymentManagerBase {
 
 
     protected void handlePaymentStatus(final String status){
-        Log.i(TAG, "Payment status " + status);
+        SecuXPaymentKitLogHandler.Log("Payment status " + status);
         if (mCallback!=null){
             mCallback.updatePaymentStatus(status);
         }
     }
 
     protected void handlePaymentDone(final boolean ret, final String errorMsg){
-        Log.i(TAG, "Payment done " + String.valueOf(ret) + " error:" + errorMsg);
+        SecuXPaymentKitLogHandler.Log("Payment done " + String.valueOf(ret) + " error:" + errorMsg);
         if (mCallback!=null){
             String transCode = "";
             String error = errorMsg;
@@ -364,7 +364,7 @@ public class SecuXPaymentManagerBase {
     }
 
     protected void handleAccountUnauthorized(){
-        Log.i(TAG, "Account unauthorized!");
+        SecuXPaymentKitLogHandler.Log("Account unauthorized!");
         if (mCallback!=null){
             mCallback.userAccountUnauthorized();
         }

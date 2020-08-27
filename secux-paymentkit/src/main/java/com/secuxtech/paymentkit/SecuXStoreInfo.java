@@ -51,6 +51,7 @@ public class SecuXStoreInfo {
             mInfo = storeInfoJson.toString();
 
         }catch (Exception e){
+            SecuXPaymentKitLogHandler.Log("SecuXStoreInfo " + e.getMessage());
             throw e;
         }
     }

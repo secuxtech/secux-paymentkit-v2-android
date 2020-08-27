@@ -4,7 +4,7 @@ package com.secuxtech.paymentkit;
  * Created by maochuns.sun@gmail.com on 2020-02-05
  */
 
-import android.util.Log;
+
 import android.util.Pair;
 
 
@@ -14,7 +14,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
+
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -32,6 +32,7 @@ class RestRequestHandler {
     public static final Integer SecuXRequestUnauthorized = 2;
     public static final Integer SecuXRequestForbiddened = 3;
 
+    /*
     public void processURLRequest(){
 
         HttpURLConnection connection = null;
@@ -60,7 +61,7 @@ class RestRequestHandler {
                     response.append(line);
                 }
                 responseReader.close();
-                Log.d("secux-paymentkit", response.toString());
+                SecuXPaymentKitLogHandler.Log(response.toString());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -90,22 +91,25 @@ class RestRequestHandler {
                 response = getResponse(in);
                 result = SecuXRequestOK;
                 if (mLogReply) {
-                    Log.i(TAG, response);
+                    SecuXPaymentKitLogHandler.Log(response);
                 }
             }else{
                 InputStream errIn = connection.getErrorStream();
                 response = getResponse(errIn);
                 //String errormsg = connection.getResponseMessage();
-                Log.e(TAG, "Server request response code = " + response);
+                SecuXPaymentKitLogHandler.Log("Server request response code = " + response);
             }
 
             connection.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
             response = e.getMessage();
+            SecuXPaymentKitLogHandler.Log(response);
         }
         return new Pair<>(result, response);
     }
+
+     */
 
     public Pair<Integer, String> processPostRequest(String path) {
         Integer result = SecuXRequestFailed;
@@ -132,29 +136,39 @@ class RestRequestHandler {
                 result = SecuXRequestOK;
 
                 if (mLogReply) {
-                    Log.i(TAG, response);
+                    SecuXPaymentKitLogHandler.Log(response);
                 }
             }else if (responseCode == HttpsURLConnection.HTTP_UNAUTHORIZED){
 
                 response = "Unauthorized";
                 result = SecuXRequestUnauthorized;
 
+                SecuXPaymentKitLogHandler.Log("Server request " + path + "Param: null");
+                SecuXPaymentKitLogHandler.Log(response);
+
             }else if (responseCode == HttpsURLConnection.HTTP_FORBIDDEN){
 
                 response = "Forbidden operation";
                 result = SecuXRequestForbiddened;
 
+                SecuXPaymentKitLogHandler.Log("Server request " + path + "Param: null");
+                SecuXPaymentKitLogHandler.Log(response);
+
             }else{
                 InputStream errIn = connection.getErrorStream();
                 response = getResponse(errIn);
                 //String errormsg = connection.getResponseMessage();
-                Log.e(TAG, "Server request " + path + " response code = " + response);
+                SecuXPaymentKitLogHandler.Log("Server request " + path + "Param: null");
+                SecuXPaymentKitLogHandler.Log(" response code = " + response);
             }
             connection.disconnect();
 
         } catch (Exception e) {
             e.printStackTrace();
             response = e.getMessage();
+
+            SecuXPaymentKitLogHandler.Log("Server request " + path + "Param: null");
+            SecuXPaymentKitLogHandler.Log(response);
         }
         return new Pair<>(result, response);
     }
@@ -191,34 +205,38 @@ class RestRequestHandler {
                 result = SecuXRequestOK;
 
                 if (mLogReply) {
-                    Log.i(TAG, response);
+                    SecuXPaymentKitLogHandler.Log(response);
                 }
 
             }else if (responseCode == HttpsURLConnection.HTTP_UNAUTHORIZED){
 
                 response = "Unauthorized";
                 result = SecuXRequestUnauthorized;
+                SecuXPaymentKitLogHandler.Log("Server request: " + path + " param: " + param.toString() + "  response code = " + response);
 
             }else if (responseCode == HttpsURLConnection.HTTP_FORBIDDEN){
 
                 response = "Forbidden operation";
                 result = SecuXRequestForbiddened;
+                SecuXPaymentKitLogHandler.Log("Server request: " + path + " param: " + param.toString() + "  response code = " + response);
 
             }else{
                 InputStream errIn = connection.getErrorStream();
                 response = getResponse(errIn);
                 //String errormsg = connection.getResponseMessage();
 
-                Log.e(TAG, "Server request: " + path + " param: " + param.toString() + "  response code = " + response);
+                SecuXPaymentKitLogHandler.Log("Server request: " + path + " param: " + param.toString() + "  response code = " + response);
 
             }
 
             connection.disconnect();
 
         } catch (Exception e) {
-            Log.i(TAG, "connection timeout = " + mConnectTimeout);
+            SecuXPaymentKitLogHandler.Log("connection timeout = " + mConnectTimeout);
             e.printStackTrace();
             response = e.getMessage();
+
+            SecuXPaymentKitLogHandler.Log("Server request: " + path + " param: " + param.toString() + "  response code = " + response);
         }
 
         return new Pair<>(result, response);
@@ -266,26 +284,27 @@ class RestRequestHandler {
                 result = SecuXRequestOK;
 
                 if (mLogReply) {
-                    Log.i(TAG, response);
+                    SecuXPaymentKitLogHandler.Log(response);
                 }
             }else if (responseCode == HttpsURLConnection.HTTP_UNAUTHORIZED){
 
                 response = "Unauthorized";
                 result = SecuXRequestUnauthorized;
+                SecuXPaymentKitLogHandler.Log("Server request: " + path + " param: " + paramStr + "  response code = " + response);
 
             }else if (responseCode == HttpsURLConnection.HTTP_FORBIDDEN){
 
                 response = "Forbidden operation";
                 result = SecuXRequestForbiddened;
 
-                Log.e(TAG, "Server request: " + path + " param: " + paramStr + "  response code = " + response);
+                SecuXPaymentKitLogHandler.Log("Server request: " + path + " param: " + paramStr + "  response code = " + response);
 
             }else{
                 InputStream errIn = connection.getErrorStream();
                 response = getResponse(errIn);
                 //String errormsg = connection.getResponseMessage();
 
-                Log.e(TAG, "Server request: " + path + " param: " + paramStr + "  response code = " + response);
+                SecuXPaymentKitLogHandler.Log("Server request: " + path + " param: " + paramStr + "  response code = " + response);
             }
 
             connection.disconnect();
@@ -293,6 +312,7 @@ class RestRequestHandler {
         } catch (Exception e) {
             e.printStackTrace();
             response = e.getMessage();
+            SecuXPaymentKitLogHandler.Log("Server request: " + path + " param: " + paramStr + "  response code = " + response);
         }
 
         return new Pair<>(result, response);

@@ -42,7 +42,7 @@ public class SecuXTransferHistory {
             mDetailslUrl = historyJson.getString("detailsUrl");
         }catch (Exception e){
             Log.i(TAG, historyJson.toString());
-            Log.e(TAG, "Load account history data error " + e.getMessage());
+            SecuXPaymentKitLogHandler.Log( "Load account history data error " + e.getMessage());
             throw e;
         }
     }

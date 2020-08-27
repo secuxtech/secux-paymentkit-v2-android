@@ -51,6 +51,7 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
      */
 
     public Pair<Pair<Integer, String>, SecuXStoreInfo> getStoreInfo(String devIDHash){
+        SecuXPaymentKitLogHandler.Log("getStoreInfo");
         Pair<Integer, String> response = this.mSecuXSvrReqHandler.getStoreInfo(devIDHash);
         if (response.first==SecuXServerRequestHandler.SecuXRequestOK) {
             try {
@@ -58,7 +59,7 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
                 return new Pair<>(response, storeInfo);
 
             } catch (Exception e) {
-                Log.e(TAG, e.getLocalizedMessage());
+                SecuXPaymentKitLogHandler.Log(e.getLocalizedMessage());
 
                 return new Pair<>(new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Inavlid store info."), null);
             }
@@ -68,6 +69,7 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
     }
 
     public void doPayment(Context context, final SecuXUserAccount account, final String storeInfo, final String paymentInfo){
+        SecuXPaymentKitLogHandler.Log("doPayment");
         this.mContext = context;
 
         new Thread(new Runnable() {
@@ -80,6 +82,7 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
     }
 
     public void doPayment(final String nonce, Context context, final SecuXUserAccount account, final String storeInfo, final String paymentInfo){
+        SecuXPaymentKitLogHandler.Log("doPayment wioth nonce");
         this.mContext = context;
 
         new Thread(new Runnable() {
@@ -93,10 +96,12 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
 
 
     public Pair<Integer, String> getDeviceInfo(String paymentInfo){
+        SecuXPaymentKitLogHandler.Log("getDeviceInfo");
         return this.mSecuXSvrReqHandler.getDeviceInfo(paymentInfo);
     }
 
     public Pair<Integer, String> getPaymentHistory(String token, int pageNum, int count, ArrayList<SecuXPaymentHistory> historyArr){
+        SecuXPaymentKitLogHandler.Log("getPaymentHistory");
         Pair<Integer, String> ret = this.mSecuXSvrReqHandler.getPaymentHistory(token, pageNum, count);
         if (ret.first==SecuXServerRequestHandler.SecuXRequestOK){
             try{
@@ -115,6 +120,7 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
     }
 
     public Pair<Integer, String> getPaymentHistory(String token, String transactionCode, SecuXPaymentHistory paymentHistory){
+        SecuXPaymentKitLogHandler.Log("getPaymentHistory for a specified trans code");
         Pair<Integer, String> ret = this.mSecuXSvrReqHandler.getPaymentHistory(token, transactionCode);
         if (ret.first==SecuXServerRequestHandler.SecuXRequestOK){
             try{
@@ -134,6 +140,7 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
 
 
     public Pair<Integer, String> doRefund(Context context, String devID, String devIDHash){
+        SecuXPaymentKitLogHandler.Log("doRefund");
         //return this.mSecuXSvrReqHandler.refund(devIDHash, ivKey, dataHash);
         this.mContext = context;
         Pair<Integer, Pair<String, String>> ret = mPaymentPeripheralManager.getRefundRefillInfo(context, devID);
@@ -147,6 +154,7 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
     }
 
     public Pair<Integer, String> doRefill(Context context, String devID, String devIDHash){
+        SecuXPaymentKitLogHandler.Log("doRefill");
         //return this.mSecuXSvrReqHandler.refill(devIDHash, ivKey, dataHash);
         this.mContext = context;
         Pair<Integer, Pair<String, String>> ret = mPaymentPeripheralManager.getRefundRefillInfo(context, devID);
@@ -162,6 +170,7 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
 
 
     public Pair<Integer, String> doActivity(Context context, String userID, String devID, String coin, String token, String transID, String amount, String nonce){
+        SecuXPaymentKitLogHandler.Log("doActivity");
         byte[] code = SecuXPaymentUtility.hexStringToData(nonce);
         //Pair<Integer, String> ret = mPaymentPeripheralManager.doGetIVKey(code, context, 10,
         //                                                                devID, -75, 30);
@@ -176,7 +185,7 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
                 try {
 
                     JSONObject payRetJson = new JSONObject(encRet.second);
-                    Log.i(TAG, SystemClock.uptimeMillis() + " Send server request done " + payRetJson.toString());
+                    SecuXPaymentKitLogHandler.Log(SystemClock.uptimeMillis() + " Send server request done " + payRetJson.toString());
 
                     int statusCode = payRetJson.getInt("statusCode");
                     String statusDesc = payRetJson.getString("statusDesc");
@@ -200,7 +209,7 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
 
 
                 }catch (Exception e){
-                    Log.e(TAG, e.getLocalizedMessage());
+                    SecuXPaymentKitLogHandler.Log(e.getLocalizedMessage());
                     mPaymentPeripheralManager.requestDisconnect();
                     return new Pair<>(SecuXRequestFailed, "Parsing encrypt data from server exception. " + encRet.second);
                 }

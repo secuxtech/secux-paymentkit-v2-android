@@ -56,6 +56,7 @@ public class SecuXPaymentHistory {
             mDetailsUrl = hisJson.getString("detailsUrl");
 
         }catch (Exception e){
+            SecuXPaymentKitLogHandler.Log("SecuXPaymentHistory " + e.getMessage());
             throw e;
         }
     }
@@ -83,6 +84,7 @@ public class SecuXPaymentHistory {
             mDetailsUrl = hisJson.getString("detailsUrl");
 
         } catch (Exception e) {
+            SecuXPaymentKitLogHandler.Log("SecuXPaymentHistory " + e.getMessage());
             throw e;
         }
     }
