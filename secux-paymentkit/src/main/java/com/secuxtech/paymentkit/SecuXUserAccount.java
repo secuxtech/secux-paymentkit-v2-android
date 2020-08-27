@@ -21,6 +21,9 @@ public class SecuXUserAccount {
         mPassword = password;
         mEmail = email;
         mAlias = email.substring(0, email.indexOf('@'));
+        if (mAlias == null){
+            mAlias = email;
+        }
         mPhoneNum = phone;
     }
 
@@ -28,7 +31,11 @@ public class SecuXUserAccount {
         mAccountName = email;
         mPassword = password;
         mEmail = email;
+
         mAlias = email.substring(0, email.indexOf('@'));
+        if (mAlias == null){
+            mAlias = email;
+        }
     }
     
     public SecuXCoinAccount getCoinAccount(String coinType){
