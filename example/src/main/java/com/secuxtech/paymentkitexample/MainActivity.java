@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             ret = mAccountManager.getSupportedCointokenArray(coinTokenArray);
             if (ret.first == SecuXServerRequestHandler.SecuXRequestOK) {
                 for (int i = 0; i < coinTokenArray.size(); i++) {
-                    SecuXPaymentKitLogHandler.Log(coinTokenArray.get(i).toString());
+                    Log.i(TAG, coinTokenArray.get(i).toString());
                 }
             }
 
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                             //SecuXCoinAccount coinAcc = mAccount.getCoinAccount("DCT");
                             SecuXCoinTokenBalance balance = coinAcc.getBalance(token);
 
-                            SecuXPaymentKitLogHandler.Log("Token=" + token + " balance=" + balance.mFormattedBalance.toString() + " usdBalance=" + balance.mUSDBalance.toString());
+                            Log.i(TAG, "Token=" + token + " balance=" + balance.mFormattedBalance.toString() + " usdBalance=" + balance.mUSDBalance.toString());
 
                         } else {
                             showMessageInMain("Get account balance failed! Error: " + ret.second);
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                     showMessageInMain("Get payment history failed!");
                     break;
                 }else if (payHisArr.size() - preHisItemCount < hisItemCount){
-                    SecuXPaymentKitLogHandler.Log("Get all history items");
+                    Log.i(TAG, "Get all history items");
                     break;
                 }
                 idx += 1;
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
             for(int i=0; i<payHisArr.size(); i++){
                 SecuXPaymentHistory history = payHisArr.get(i);
-                SecuXPaymentKitLogHandler.Log("Store = " + history.mStoreName + " CoinType =" + history.mCoinType +
+                Log.i(TAG, "Store = " + history.mStoreName + " CoinType =" + history.mCoinType +
                         " amount=" + history.mAmount.toString() + history.mToken + " timestamp=" + history.mTransactionTime);
             }
 
@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
                         mPaymentManager.doPayment(mContext, mAccount, storeInfoRet.second.mInfo, ret.second);
                     }
                 }catch (Exception e){
-                    SecuXPaymentKitLogHandler.Log("Invalid store info "+e.getLocalizedMessage());
+                    Log.i(TAG, "Invalid store info "+e.getLocalizedMessage());
                 }
             }
         }
@@ -234,22 +234,22 @@ public class MainActivity extends AppCompatActivity {
         //Called when payment status is changed. Payment status are: "Device connecting...", "DCT transferring..." and "Device verifying..."
         @Override
         public void updatePaymentStatus(final String status){
-            SecuXPaymentKitLogHandler.Log("Update payment status: " + status);
+            Log.i(TAG, "Update payment status: " + status);
         }
 
 
         //Called when the user login account token is timeout. Just login in the account again.
         @Override
         public void userAccountUnauthorized(){
-            SecuXPaymentKitLogHandler.Log("account unauthorized login again");
+            Log.i(TAG, "account unauthorized login again");
 
             mAccount = new SecuXUserAccount("maochuntest6@secuxtech.com", "0975123456", "12345678");
             Pair<Integer, String> ret = mAccountManager.loginUserAccount(mAccount);
 
             if (ret.first==SecuXServerRequestHandler.SecuXRequestOK){
-                SecuXPaymentKitLogHandler.Log("Login successfully");
+                Log.i(TAG, "Login successfully");
             }else{
-                SecuXPaymentKitLogHandler.Log("Login failed!");
+                Log.i(TAG, "Login failed!");
             }
         }
 

@@ -103,7 +103,6 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
 
             Pair<Integer, String> result = this.processPostRequest(registerUrl, param, adminToken, 30000);
 
-            SecuXPaymentKitLogHandler.Log(result.second);
             return result;
 
         }catch (Exception e){
@@ -126,7 +125,6 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
                 //mToken = token;
             }
 
-            SecuXPaymentKitLogHandler.Log(response.second);
             return response;
 
         }catch (Exception e){
@@ -150,7 +148,6 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
                 mToken = token;
             }
 
-            SecuXPaymentKitLogHandler.Log(response.second);
             return response;
 
         }catch (Exception e){
@@ -174,7 +171,6 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
                 mToken = token;
             }
 
-            SecuXPaymentKitLogHandler.Log(response.second);
             return response;
 
         }catch (Exception e){
@@ -216,7 +212,6 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             param.put("symbol", token);
             Pair<Integer, String> response = this.processPostRequest(balanceUrl, param, mToken);
 
-            SecuXPaymentKitLogHandler.Log(response.second);
             return response;
 
         }catch (Exception e){
@@ -264,7 +259,6 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
 
             Pair<Integer, String> response = this.processPostRequest(getStoreUrl, param, mToken);
 
-            SecuXPaymentKitLogHandler.Log(response.second);
             return response;
 
         }catch (Exception e){
@@ -291,7 +285,7 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             //param.put("account", sender);
             param.put("receiver", payInfo.mDevID);
 
-            SecuXPaymentKitLogHandler.Log(param.toString());
+            //SecuXPaymentKitLogHandler.Log(param.toString());
 
             Pair<Integer, String> response = this.processPostRequest(paymentUrl, param, mToken, 20000);
             return response;
