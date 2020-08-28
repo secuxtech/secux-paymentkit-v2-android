@@ -140,9 +140,10 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
 
 
     public Pair<Integer, String> doRefund(Context context, String devID, String devIDHash){
-        SecuXPaymentKitLogHandler.Log("doRefund");
+        SecuXPaymentKitLogHandler.Log("doRefund " + devID);
         //return this.mSecuXSvrReqHandler.refund(devIDHash, ivKey, dataHash);
         this.mContext = context;
+
         Pair<Integer, Pair<String, String>> ret = mPaymentPeripheralManager.getRefundRefillInfo(context, devID);
         if (ret.first == SecuX_Peripheral_Operation_OK){
             Pair<Integer, String> refundRet = this.mSecuXSvrReqHandler.refund(devIDHash, ret.second.second, ret.second.first);
@@ -154,7 +155,7 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
     }
 
     public Pair<Integer, String> doRefill(Context context, String devID, String devIDHash){
-        SecuXPaymentKitLogHandler.Log("doRefill");
+        SecuXPaymentKitLogHandler.Log("doRefill " + devID);
         //return this.mSecuXSvrReqHandler.refill(devIDHash, ivKey, dataHash);
         this.mContext = context;
         Pair<Integer, Pair<String, String>> ret = mPaymentPeripheralManager.getRefundRefillInfo(context, devID);
@@ -168,9 +169,39 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
         return new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Get refill info. from device failed. Error: " + ret.second.first);
     }
 
+    public Pair<Integer, String> doRefund(String nonce, Context context, String devID, String devIDHash){
+        SecuXPaymentKitLogHandler.Log("doRefund with nonce" + devID);
+        //return this.mSecuXSvrReqHandler.refund(devIDHash, ivKey, dataHash);
+        this.mContext = context;
+        byte[] code = SecuXPaymentUtility.hexStringToData(nonce);
+        Pair<Integer, Pair<String, String>> ret = mPaymentPeripheralManager.getRefundRefillInfo(context, devID, code);
+        if (ret.first == SecuX_Peripheral_Operation_OK){
+            Pair<Integer, String> refundRet = this.mSecuXSvrReqHandler.refund(devIDHash, ret.second.second, ret.second.first);
+            if (refundRet.first == SecuXServerRequestHandler.SecuXRequestOK){
+                return sendRefundOrRefillInfoToDevice(refundRet.second);
+            }
+        }
+        return new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Get refund info. from device failed. Error: " + ret.second.first);
+    }
+
+    public Pair<Integer, String> doRefill(String nonce, Context context, String devID, String devIDHash){
+        SecuXPaymentKitLogHandler.Log("doRefill with nonce" + devID);
+        //return this.mSecuXSvrReqHandler.refill(devIDHash, ivKey, dataHash);
+        this.mContext = context;
+        byte[] code = SecuXPaymentUtility.hexStringToData(nonce);
+        Pair<Integer, Pair<String, String>> ret = mPaymentPeripheralManager.getRefundRefillInfo(context, devID, code);
+        if (ret.first == SecuX_Peripheral_Operation_OK){
+            Pair<Integer, String> refillRet = this.mSecuXSvrReqHandler.refill(devIDHash, ret.second.second, ret.second.first);
+            if (refillRet.first == SecuXServerRequestHandler.SecuXRequestOK){
+                return sendRefundOrRefillInfoToDevice(refillRet.second);
+            }
+        }
+
+        return new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Get refill info. from device failed. Error: " + ret.second.first);
+    }
 
     public Pair<Integer, String> doActivity(Context context, String userID, String devID, String coin, String token, String transID, String amount, String nonce){
-        SecuXPaymentKitLogHandler.Log("doActivity");
+        SecuXPaymentKitLogHandler.Log(SystemClock.uptimeMillis() + " doActivity " + devID);
         byte[] code = SecuXPaymentUtility.hexStringToData(nonce);
         //Pair<Integer, String> ret = mPaymentPeripheralManager.doGetIVKey(code, context, 10,
         //                                                                devID, -75, 30);
@@ -185,7 +216,7 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
                 try {
 
                     JSONObject payRetJson = new JSONObject(encRet.second);
-                    SecuXPaymentKitLogHandler.Log(SystemClock.uptimeMillis() + " Send server request done " + payRetJson.toString());
+                    SecuXPaymentKitLogHandler.Log(SystemClock.uptimeMillis() + " Send server request done ");
 
                     int statusCode = payRetJson.getInt("statusCode");
                     String statusDesc = payRetJson.getString("statusDesc");

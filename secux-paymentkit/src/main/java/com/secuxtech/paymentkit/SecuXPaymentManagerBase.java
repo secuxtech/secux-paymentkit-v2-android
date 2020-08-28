@@ -195,7 +195,7 @@ public class SecuXPaymentManagerBase {
 
     protected Pair<Integer, String> sendRefundOrRefillInfoToDevice(String info){
 
-        SecuXPaymentKitLogHandler.Log(SystemClock.uptimeMillis() + " sendRefundOrRefillInfoToDevice " + info);
+        SecuXPaymentKitLogHandler.Log(SystemClock.uptimeMillis() + " sendRefundOrRefillInfoToDevice ");
         Pair<Integer, String> ret = new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Unknown error");
         try {
 
@@ -271,7 +271,7 @@ public class SecuXPaymentManagerBase {
         try {
 
             JSONObject payRetJson = new JSONObject(payRet.second);
-            SecuXPaymentKitLogHandler.Log(SystemClock.uptimeMillis() + " Send server request done " + payRetJson.toString());
+            SecuXPaymentKitLogHandler.Log(SystemClock.uptimeMillis() + " Send server request done ");
 
             int statusCode = payRetJson.getInt("statusCode");
             String statusDesc = payRetJson.getString("statusDesc");

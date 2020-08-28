@@ -143,7 +143,7 @@ class RestRequestHandler {
                 response = "Unauthorized";
                 result = SecuXRequestUnauthorized;
 
-                SecuXPaymentKitLogHandler.Log("Server request " + path + "Param: null");
+                SecuXPaymentKitLogHandler.Log("Server request failed! " + path + "Param: null");
                 SecuXPaymentKitLogHandler.Log(response);
 
             }else if (responseCode == HttpsURLConnection.HTTP_FORBIDDEN){
@@ -151,15 +151,15 @@ class RestRequestHandler {
                 response = "Forbidden operation";
                 result = SecuXRequestForbiddened;
 
-                SecuXPaymentKitLogHandler.Log("Server request " + path + "Param: null");
+                SecuXPaymentKitLogHandler.Log("Server request failed! " + path + "Param: null");
                 SecuXPaymentKitLogHandler.Log(response);
 
             }else{
                 InputStream errIn = connection.getErrorStream();
                 response = getResponse(errIn);
                 //String errormsg = connection.getResponseMessage();
-                SecuXPaymentKitLogHandler.Log("Server request " + path + "Param: null");
-                SecuXPaymentKitLogHandler.Log(" response code = " + response);
+                SecuXPaymentKitLogHandler.Log("Server request failed! " + path + "Param: null");
+                SecuXPaymentKitLogHandler.Log(response);
             }
             connection.disconnect();
 
@@ -167,7 +167,7 @@ class RestRequestHandler {
             e.printStackTrace();
             response = e.getMessage();
 
-            SecuXPaymentKitLogHandler.Log("Server request " + path + "Param: null");
+            SecuXPaymentKitLogHandler.Log("Server request failed! " + path + "Param: null");
             SecuXPaymentKitLogHandler.Log(response);
         }
         return new Pair<>(result, response);
@@ -212,20 +212,20 @@ class RestRequestHandler {
 
                 response = "Unauthorized";
                 result = SecuXRequestUnauthorized;
-                SecuXPaymentKitLogHandler.Log("Server request: " + path + " param: " + param.toString() + "  response code = " + response);
+                SecuXPaymentKitLogHandler.Log("Server request: failed! " + path + " param: " + param.toString() + "  response code = " + response);
 
             }else if (responseCode == HttpsURLConnection.HTTP_FORBIDDEN){
 
                 response = "Forbidden operation";
                 result = SecuXRequestForbiddened;
-                SecuXPaymentKitLogHandler.Log("Server request: " + path + " param: " + param.toString() + "  response code = " + response);
+                SecuXPaymentKitLogHandler.Log("Server request: failed! " + path + " param: " + param.toString() + "  response code = " + response);
 
             }else{
                 InputStream errIn = connection.getErrorStream();
                 response = getResponse(errIn);
                 //String errormsg = connection.getResponseMessage();
 
-                SecuXPaymentKitLogHandler.Log("Server request: " + path + " param: " + param.toString() + "  response code = " + response);
+                SecuXPaymentKitLogHandler.Log("Server request: failed! " + path + " param: " + param.toString() + "  response code = " + response);
 
             }
 
@@ -236,7 +236,7 @@ class RestRequestHandler {
             e.printStackTrace();
             response = e.getMessage();
 
-            SecuXPaymentKitLogHandler.Log("Server request: " + path + " param: " + param.toString() + "  response code = " + response);
+            SecuXPaymentKitLogHandler.Log("Server request exception: " + path + " param: " + param.toString() + "  response code = " + response);
         }
 
         return new Pair<>(result, response);
@@ -290,21 +290,21 @@ class RestRequestHandler {
 
                 response = "Unauthorized";
                 result = SecuXRequestUnauthorized;
-                SecuXPaymentKitLogHandler.Log("Server request: " + path + " param: " + paramStr + "  response code = " + response);
+                SecuXPaymentKitLogHandler.Log("Server request: failed! " + path + " param: " + paramStr + "  response code = " + response);
 
             }else if (responseCode == HttpsURLConnection.HTTP_FORBIDDEN){
 
                 response = "Forbidden operation";
                 result = SecuXRequestForbiddened;
 
-                SecuXPaymentKitLogHandler.Log("Server request: " + path + " param: " + paramStr + "  response code = " + response);
+                SecuXPaymentKitLogHandler.Log("Server request: failed! " + path + " param: " + paramStr + "  response code = " + response);
 
             }else{
                 InputStream errIn = connection.getErrorStream();
                 response = getResponse(errIn);
                 //String errormsg = connection.getResponseMessage();
 
-                SecuXPaymentKitLogHandler.Log("Server request: " + path + " param: " + paramStr + "  response code = " + response);
+                SecuXPaymentKitLogHandler.Log("Server request: failed! " + path + " param: " + paramStr + "  response code = " + response);
             }
 
             connection.disconnect();
@@ -312,7 +312,7 @@ class RestRequestHandler {
         } catch (Exception e) {
             e.printStackTrace();
             response = e.getMessage();
-            SecuXPaymentKitLogHandler.Log("Server request: " + path + " param: " + paramStr + "  response code = " + response);
+            SecuXPaymentKitLogHandler.Log("Server request: exception " + path + " param: " + paramStr + "  response code = " + response);
         }
 
         return new Pair<>(result, response);

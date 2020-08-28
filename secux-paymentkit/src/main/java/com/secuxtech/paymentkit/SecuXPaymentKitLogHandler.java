@@ -7,10 +7,13 @@ public class SecuXPaymentKitLogHandler{
     static SecuXPaymentKitLogHandlerCallback mLogCallback = null;
 
     static public void Log(String msg){
-        Log.i("SecuXPaymentKit", msg);
 
-        if (mLogCallback != null && msg!=null && msg.length()>0){
-            mLogCallback.logFromSecuXPaymentKit(msg);
+        if (msg!=null && msg.length()>0){
+            Log.i("SecuXPaymentKit", msg);
+
+            if (mLogCallback != null) {
+                mLogCallback.logFromSecuXPaymentKit(msg);
+            }
         }
     }
 
