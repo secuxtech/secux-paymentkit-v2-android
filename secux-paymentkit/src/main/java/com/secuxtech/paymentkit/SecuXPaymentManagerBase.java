@@ -351,7 +351,7 @@ public class SecuXPaymentManagerBase {
     }
 
     protected void handlePaymentDone(final boolean ret, final String errorMsg){
-        SecuXPaymentKitLogHandler.Log("Payment done " + String.valueOf(ret) + " error:" + errorMsg);
+        SecuXPaymentKitLogHandler.Log("Payment done " + String.valueOf(ret) + " msg:" + errorMsg);
         if (mCallback!=null){
             String transCode = "";
             String error = errorMsg;
