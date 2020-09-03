@@ -54,9 +54,9 @@ public class MainActivity extends AppCompatActivity {
                 mAccount = new SecuXUserAccount("maochuntest1@secuxtech.com", "12345678");
 
                 //testAccount();
-                testPayment();
+                //testPayment();
                 //testRefundRefill();
-                //testSpringTreesAPIs();
+                testSpringTreesAPIs();
 
 
             }
@@ -177,12 +177,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void testSpringTreesAPIs(){
+        mAccountManager.setBaseServer("https://pmsweb-test.secux.io");
         Pair<Integer, String> ret = mAccountManager.loginMerchantAccount("secuxdemo", "secuxdemo168");
         if (ret.first == SecuXServerRequestHandler.SecuXRequestOK){
-            Pair<Pair<Integer, String>, SecuXStoreInfo> storeInfo = mPaymentManager.getStoreInfo("4afff62e0b314266d9e1b3a48158d56134331a9f");
+            Pair<Pair<Integer, String>, SecuXStoreInfo> storeInfo = mPaymentManager.getStoreInfo("296ec7daa1dd7460d384471ec52127492bf45f9f");
             if (storeInfo.first.first == SecuXServerRequestHandler.SecuXRequestOK){
                 Pair<Integer, String> encRet = mPaymentManager.doActivity(mContext, "secuxdemo", storeInfo.second.mDevID,
-                        "DCT", "SPC", "Test1234", "1", "9a7dc748");
+                        "LBR", "LBR", "Test1234", "1", "41395f47", "payment");
 
                 Log.i("", encRet.second);
             }

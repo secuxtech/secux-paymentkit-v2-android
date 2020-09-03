@@ -200,7 +200,7 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
         return new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Get refill info. from device failed. Error: " + ret.second.first);
     }
 
-    public Pair<Integer, String> doActivity(Context context, String userID, String devID, String coin, String token, String transID, String amount, String nonce){
+    public Pair<Integer, String> doActivity(Context context, String userID, String devID, String coin, String token, String transID, String amount, String nonce, String type){
         SecuXPaymentKitLogHandler.Log(SystemClock.uptimeMillis() + " doActivity " + devID);
         byte[] code = SecuXPaymentUtility.hexStringToData(nonce);
         //Pair<Integer, String> ret = mPaymentPeripheralManager.doGetIVKey(code, context, 10,
@@ -211,7 +211,7 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
         if (ret.first == SecuX_Peripheral_Operation_OK){
             String ivKey = ret.second;
 
-            Pair<Integer, String> encRet = mSecuXSvrReqHandler.encryptPaymentData(userID, devID, ivKey, coin, token, transID, amount);
+            Pair<Integer, String> encRet = mSecuXSvrReqHandler.encryptPaymentData(userID, devID, ivKey, coin, token, transID, amount, type);
             if (encRet.first == SecuXRequestOK){
                 try {
 
