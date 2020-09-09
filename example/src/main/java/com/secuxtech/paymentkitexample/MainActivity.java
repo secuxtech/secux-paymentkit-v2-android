@@ -54,9 +54,9 @@ public class MainActivity extends AppCompatActivity {
                 mAccount = new SecuXUserAccount("maochuntest1@secuxtech.com", "12345678");
 
                 //testAccount();
-                //testPayment();
+                testPayment();
                 //testRefundRefill();
-                testSpringTreesAPIs();
+                //testSpringTreesAPIs();
 
 
             }
@@ -118,8 +118,8 @@ public class MainActivity extends AppCompatActivity {
 
             //Get payment history
             ArrayList<SecuXPaymentHistory> payHisArr = new ArrayList<>();
-            int idx = 1;
-            int hisItemCount = 10;
+            int idx = 0;
+            int hisItemCount = 20;
             while (true){
                 int preHisItemCount = payHisArr.size();
                 ret = mPaymentManager.getPaymentHistory("SPC", idx, hisItemCount, payHisArr);

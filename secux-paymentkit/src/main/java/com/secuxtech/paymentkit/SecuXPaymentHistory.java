@@ -53,7 +53,7 @@ public class SecuXPaymentHistory {
             mTransactionStatus = hisJson.getString("transactionStatus");
             mTransactionTime = hisJson.getString("transactionTime");
             mRemark = hisJson.getString("remark");
-            mDetailsUrl = hisJson.getString("detailsUrl");
+            mDetailsUrl = hisJson.optString("detailsUrl");
 
         }catch (Exception e){
             SecuXPaymentKitLogHandler.Log("SecuXPaymentHistory " + e.getMessage());
@@ -81,7 +81,7 @@ public class SecuXPaymentHistory {
             mTransactionStatus = hisJson.getString("transactionStatus");
             mTransactionTime = hisJson.getString("transactionTime");
             mRemark = hisJson.getString("remark");
-            mDetailsUrl = hisJson.getString("detailsUrl");
+            mDetailsUrl = hisJson.optString("detailsUrl");
 
         } catch (Exception e) {
             SecuXPaymentKitLogHandler.Log("SecuXPaymentHistory " + e.getMessage());
