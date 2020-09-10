@@ -116,7 +116,13 @@ public class MainActivity extends AppCompatActivity {
         Pair<Integer, String>  ret = mAccountManager.loginUserAccount(mAccount);
         if (ret.first==SecuXServerRequestHandler.SecuXRequestOK) {
 
-            //Get payment history
+            SecuXPaymentHistory payhistory = new SecuXPaymentHistory();
+            ret = mPaymentManager.getPaymentHistory("SPC", "49296508e4714a8dbdf16fd98dd21f10", payhistory);
+            if (ret.first!=SecuXServerRequestHandler.SecuXRequestOK){
+                showMessageInMain("Get payment history failed!");
+            }
+
+                //Get payment history
             ArrayList<SecuXPaymentHistory> payHisArr = new ArrayList<>();
             int idx = 0;
             int hisItemCount = 20;

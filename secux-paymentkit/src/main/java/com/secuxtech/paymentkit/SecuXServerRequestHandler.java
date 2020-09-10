@@ -329,14 +329,20 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
         }
 
         try{
+            JSONObject subparam = new JSONObject();
+            subparam.put("offset", 0);
+            subparam.put("limit", 10);
+            subparam.put("sort", "transactionTime");
+            subparam.put("order", "descending");
+
             JSONObject param = new JSONObject();
-            //param.put("account", account.mAccountName);
+            param.put("keyword", transactionCode);
+            param.put("startTime", "");
+            param.put("endTime", "");
+            param.put("payChannel", "");
             param.put("symbol", token);
-            param.put("page", 1);
-            param.put("count", 10);
-            param.put("columnName", "");
-            param.put("sorting", "");
-            param.put("transactionCode", transactionCode);
+            param.put("transactionStatus", "");
+            param.put("params", subparam);
 
             Pair<Integer, String> response = this.processPostRequest(paymentHistoryUrl, param, mToken);
             return response;
