@@ -21,7 +21,7 @@ allprojects {
 
 ```java
 dependencies {
-    implementation 'com.github.secuxtech:secux-paymentkit-v2-android:1.0.3'
+    implementation 'com.github.secuxtech:secux-paymentkit-v2-android:{version}'
 }
 ```
 ### Add bluetooth privacy permissions
