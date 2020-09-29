@@ -143,61 +143,78 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
         SecuXPaymentKitLogHandler.Log("doRefund " + devID);
         //return this.mSecuXSvrReqHandler.refund(devIDHash, ivKey, dataHash);
         this.mContext = context;
-
+        String error = "";
         Pair<Integer, Pair<String, String>> ret = mPaymentPeripheralManager.getRefundRefillInfo(context, devID);
         if (ret.first == SecuX_Peripheral_Operation_OK){
             Pair<Integer, String> refundRet = this.mSecuXSvrReqHandler.refund(devIDHash, ret.second.second, ret.second.first);
             if (refundRet.first == SecuXServerRequestHandler.SecuXRequestOK){
                 return sendRefundOrRefillInfoToDevice(refundRet.second);
+            }else{
+                error = refundRet.second;
             }
+        }else{
+            error = ret.second.first;
         }
-        return new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Get refund info. from device failed. Error: " + ret.second.first);
+        return new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, error);
     }
 
     public Pair<Integer, String> doRefill(Context context, String devID, String devIDHash){
         SecuXPaymentKitLogHandler.Log("doRefill " + devID);
         //return this.mSecuXSvrReqHandler.refill(devIDHash, ivKey, dataHash);
         this.mContext = context;
+        String error = "";
         Pair<Integer, Pair<String, String>> ret = mPaymentPeripheralManager.getRefundRefillInfo(context, devID);
         if (ret.first == SecuX_Peripheral_Operation_OK){
             Pair<Integer, String> refillRet = this.mSecuXSvrReqHandler.refill(devIDHash, ret.second.second, ret.second.first);
             if (refillRet.first == SecuXServerRequestHandler.SecuXRequestOK){
                 return sendRefundOrRefillInfoToDevice(refillRet.second);
+            }else{
+                error = refillRet.second;
             }
+        }else{
+            error = ret.second.first;
         }
-
-        return new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Get refill info. from device failed. Error: " + ret.second.first);
+        return new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, error);
     }
 
     public Pair<Integer, String> doRefund(String nonce, Context context, String devID, String devIDHash){
         SecuXPaymentKitLogHandler.Log("doRefund with nonce" + devID);
         //return this.mSecuXSvrReqHandler.refund(devIDHash, ivKey, dataHash);
         this.mContext = context;
+        String error = "";
         byte[] code = SecuXPaymentUtility.hexStringToData(nonce);
         Pair<Integer, Pair<String, String>> ret = mPaymentPeripheralManager.getRefundRefillInfo(context, devID, code);
         if (ret.first == SecuX_Peripheral_Operation_OK){
             Pair<Integer, String> refundRet = this.mSecuXSvrReqHandler.refund(devIDHash, ret.second.second, ret.second.first);
             if (refundRet.first == SecuXServerRequestHandler.SecuXRequestOK){
                 return sendRefundOrRefillInfoToDevice(refundRet.second);
+            }else{
+                error = refundRet.second;
             }
+        }else{
+            error = ret.second.first;
         }
-        return new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Get refund info. from device failed. Error: " + ret.second.first);
+        return new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, error);
     }
 
     public Pair<Integer, String> doRefill(String nonce, Context context, String devID, String devIDHash){
         SecuXPaymentKitLogHandler.Log("doRefill with nonce" + devID);
         //return this.mSecuXSvrReqHandler.refill(devIDHash, ivKey, dataHash);
         this.mContext = context;
+        String error = "";
         byte[] code = SecuXPaymentUtility.hexStringToData(nonce);
         Pair<Integer, Pair<String, String>> ret = mPaymentPeripheralManager.getRefundRefillInfo(context, devID, code);
         if (ret.first == SecuX_Peripheral_Operation_OK){
             Pair<Integer, String> refillRet = this.mSecuXSvrReqHandler.refill(devIDHash, ret.second.second, ret.second.first);
             if (refillRet.first == SecuXServerRequestHandler.SecuXRequestOK){
                 return sendRefundOrRefillInfoToDevice(refillRet.second);
+            }else{
+                error = refillRet.second;
             }
+        }else{
+            error = ret.second.first;
         }
-
-        return new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Get refill info. from device failed. Error: " + ret.second.first);
+        return new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, error);
     }
 
     public Pair<Integer, String> doActivity(Context context, String userID, String devID, String coin, String token, String transID, String amount, String nonce, String type){
