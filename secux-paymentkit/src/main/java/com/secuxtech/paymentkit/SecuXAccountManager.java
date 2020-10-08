@@ -26,6 +26,10 @@ public class SecuXAccountManager {
         SecuXServerRequestHandler.setServerURL(url);
     }
 
+    public void setAdminAccount(String name, String password){
+        mSecuXSvrReqHandler.setAdminAccount(name, password);
+    }
+
     public String getBaseServer(){
         return SecuXServerRequestHandler.baseURL;
     }
