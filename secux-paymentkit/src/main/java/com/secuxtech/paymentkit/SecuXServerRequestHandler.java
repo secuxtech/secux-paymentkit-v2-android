@@ -36,6 +36,9 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
 
     private static String mToken = "";
 
+    private String mAdminName = "";
+    private String mAdminPassword = "";
+
     public static void setServerURL(String svrUrl){
         baseURL = svrUrl;
         adminLoginUrl = baseURL + "/api/Admin/Login";
@@ -60,12 +63,32 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
         SecuXPaymentKitLogHandler.Log("setBaseServer " + svrUrl);
     }
 
+    public void setAdminAccount(String name, String password){
+        SecuXPaymentKitLogHandler.Log("setAdminAccount");
+
+        mAdminName = name;
+        mAdminPassword = password;
+    }
+
     public String getAdminToken(){
         SecuXPaymentKitLogHandler.Log("getAdminToken");
+
+        String adminName="", adminPwd="";
+        if (mAdminName.length() > 0 && mAdminPassword.length() > 0){
+            adminName = mAdminName;
+            adminPwd = mAdminPassword;
+        }else{
+            adminName = "secux_register";
+            adminPwd = "!secux_register@123";
+            if (SecuXServerRequestHandler.baseURL.compareToIgnoreCase("https://pmsweb.secuxtech.com") == 0){
+                adminPwd = "168!Secux@168";
+            }
+        }
+
         try {
             JSONObject param = new JSONObject();
-            param.put("account", "secux_register");
-            param.put("password", "!secux_register@123");
+            param.put("account", adminName);
+            param.put("password", adminPwd);
             Pair<Integer, String> response = this.processPostRequest(adminLoginUrl, param);
 
             if (response.first == SecuXRequestOK) {
