@@ -10,6 +10,7 @@ import android.util.Pair;
 
 import org.json.JSONObject;
 
+import java.util.TimeZone;
 
 
 public class SecuXServerRequestHandler extends RestRequestHandler {
@@ -298,6 +299,8 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             return new Pair<>(SecuXRequestFailed, "No token");
         }
 
+        TimeZone tz = TimeZone.getDefault();
+
         try{
             JSONObject param = new JSONObject();
             param.put("ivKey", payInfo.mIVKey);
@@ -307,6 +310,7 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             param.put("coinType", payInfo.mCoinType);
             //param.put("account", sender);
             param.put("receiver", payInfo.mDevID);
+            param.put("timeZone", ""+tz.getRawOffset()/1000);
 
             //SecuXPaymentKitLogHandler.Log(param.toString());
 
@@ -511,11 +515,14 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             return new Pair<>(SecuXRequestFailed, "No token");
         }
 
+        TimeZone tz = TimeZone.getDefault();
         try{
             JSONObject param = new JSONObject();
             param.put("deviceIDhash", devIDHash);
             param.put("ivKey", ivKey);
             param.put("hashTx", dataHash);
+            param.put("timeZone", ""+tz.getRawOffset()/1000);
+
             Log.i(TAG, "Refund param " + param.toString());
             Pair<Integer, String> response = this.processPostRequest(refundUrl, param, mToken);
             return response;
@@ -541,11 +548,14 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             return new Pair<>(SecuXRequestFailed, "No token");
         }
 
+        TimeZone tz = TimeZone.getDefault();
         try{
             JSONObject param = new JSONObject();
             param.put("deviceIDhash", devIDHash);
             param.put("ivKey", ivKey);
             param.put("hashTx", dataHash);
+            param.put("timeZone", ""+tz.getRawOffset()/1000);
+
             Log.i(TAG, "Refill param: " + param.toString());
             Pair<Integer, String> response = this.processPostRequest(refillUrl, param, mToken);
             return response;
