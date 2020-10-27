@@ -323,6 +323,37 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
         }
     }
 
+    public Pair<Integer, String> doPayment(PaymentInfo payInfo){
+        SecuXPaymentKitLogHandler.Log("doPayment");
+        if (mToken.length()==0){
+            SecuXPaymentKitLogHandler.Log("No token");
+            return new Pair<>(SecuXRequestFailed, "No token");
+        }
+
+        TimeZone tz = TimeZone.getDefault();
+
+        try{
+            JSONObject param = new JSONObject();
+            param.put("ivKey", payInfo.mIVKey);
+            param.put("memo", "");
+            param.put("symbol", payInfo.mToken);
+            param.put("amount", payInfo.mAmount);
+            param.put("coinType", payInfo.mCoinType);
+            //param.put("account", sender);
+            param.put("receiver", payInfo.mDevID);
+            param.put("timeZone", ""+tz.getRawOffset()/1000);
+
+            //SecuXPaymentKitLogHandler.Log(param.toString());
+
+            Pair<Integer, String> response = this.processPostRequest(paymentUrl, param, mToken, 20000);
+            return response;
+
+        }catch (Exception e){
+            SecuXPaymentKitLogHandler.Log(e.getMessage());
+            return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
+        }
+    }
+
     public Pair<Integer, String> doTransfer(String cointype, String token, String feesymbol, String receiver, String amount){
         SecuXPaymentKitLogHandler.Log("doTransfer");
         if (mToken.length()==0){

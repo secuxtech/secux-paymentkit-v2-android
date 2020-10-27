@@ -165,6 +165,54 @@ public class SecuXPaymentManagerBase {
 
     }
 
+    protected void doPayment(String paymentInfo){
+
+        SecuXPaymentKitLogHandler.Log("doPayment");
+
+        if (getPaymentInfo(paymentInfo)){
+            SecuXPaymentKitLogHandler.Log("pay to device " + mPaymentInfo.mDevID);
+
+            handlePaymentStatus(mPaymentInfo.mToken + " transferring...");
+            Pair<Integer, String> payRet = mSecuXSvrReqHandler.doPayment(mPaymentInfo);
+            if (payRet.first == SecuXServerRequestHandler.SecuXRequestUnauthorized){
+                mPaymentPeripheralManager.requestDisconnect();
+                handleAccountUnauthorized();
+                return;
+            }else if (payRet.first != SecuXServerRequestHandler.SecuXRequestOK){
+                mPaymentPeripheralManager.requestDisconnect();
+                handlePaymentDone(false, payRet.second);
+                return;
+            }
+
+            try {
+
+                JSONObject payRetJson = new JSONObject(payRet.second);
+                SecuXPaymentKitLogHandler.Log(SystemClock.uptimeMillis() + " Send server request done ");
+
+                int statusCode = payRetJson.getInt("statusCode");
+                String statusDesc = payRetJson.getString("statusDesc");
+
+                if (statusCode != 200){
+                    mPaymentPeripheralManager.requestDisconnect();
+                    handlePaymentDone(false, statusDesc);
+                    return;
+                }
+
+                String transCode = payRetJson.getString("transactionCode");
+                handlePaymentDone(true, transCode);
+
+            }catch (Exception e){
+                SecuXPaymentKitLogHandler.Log( e.getLocalizedMessage());
+                mPaymentPeripheralManager.requestDisconnect();
+                handlePaymentDone(false, mPaymentInfo.mCoinType.toString() + " transfer failed!");
+            }
+
+        }else {
+            handlePaymentDone(false, "Wrong payment information");
+        }
+
+    }
+
     protected boolean getPaymentInfo(String paymentInfo){
         try {
             JSONObject jsonInfo = new JSONObject(paymentInfo);

@@ -82,13 +82,25 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
     }
 
     public void doPayment(final String nonce, Context context, final SecuXUserAccount account, final String storeInfo, final String paymentInfo){
-        SecuXPaymentKitLogHandler.Log("doPayment wioth nonce");
+        SecuXPaymentKitLogHandler.Log("doPayment with nonce");
         this.mContext = context;
 
         new Thread(new Runnable() {
             @Override
             public void run() {
                 doPayment(nonce, account, storeInfo, paymentInfo);
+            }
+        }).start();
+
+    }
+
+    public void doPaymentForNoBLEP22Async(final String paymentInfo){
+        SecuXPaymentKitLogHandler.Log("doPayment for no ble P22");
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                doPayment(paymentInfo);
             }
         }).start();
 
