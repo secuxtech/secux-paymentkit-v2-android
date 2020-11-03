@@ -11,10 +11,12 @@ import android.util.Pair;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -188,14 +190,17 @@ class RestRequestHandler {
             connection.setConnectTimeout(mConnectTimeout);
             connection.setReadTimeout(mConnectTimeout);
             connection.setRequestProperty("Charset", "UTF-8");
-            connection.setRequestProperty("Content-Length", String.valueOf(paramStr.length()));
+            //connection.setRequestProperty("Content-Length", String.valueOf(paramStr.length()));
             connection.setRequestProperty("Content-Type", "application/json");
             connection.connect();
 
             DataOutputStream out = new DataOutputStream(connection.getOutputStream());
+            BufferedWriter writer = new BufferedWriter( new OutputStreamWriter(out, "UTF-8"));
+            writer.write(paramStr);
+            writer.close();
 
-            out.writeBytes(paramStr);
-            out.flush();
+            //out.writeBytes(paramStr);
+            //out.flush();
             out.close();
 
             Integer responseCode = connection.getResponseCode();
@@ -267,13 +272,16 @@ class RestRequestHandler {
 
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestProperty("Authorization", "Bearer " + token);
-            connection.setRequestProperty("Content-Length", String.valueOf(paramStr.length()));
+            //connection.setRequestProperty("Content-Length", String.valueOf(paramStr.length()));
             connection.connect();
 
             if (paramStr.length() > 0) {
                 DataOutputStream out = new DataOutputStream(connection.getOutputStream());
-                out.writeBytes(paramStr);
-                out.flush();
+                BufferedWriter writer = new BufferedWriter( new OutputStreamWriter(out, "UTF-8"));
+                writer.write(paramStr);
+                writer.close();
+                //out.writeBytes(paramStr);
+                //out.flush();
                 out.close();
             }
 
