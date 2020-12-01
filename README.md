@@ -52,7 +52,14 @@ import com.secuxtech.paymentkit.*;
 
 ## Usage
 
-### Server URL
+### 1. Initialization
+
+    All the three init functions should be done when app starts up.
+
+    Use SecuXAccountManager object to do the operations below.
+    SecuXAccountManager mAccountManager = new SecuXAccountManager();
+
+### 1.1 Server URL
 Set server URL before using the APIs below
 
 #### <u>Declaration</u>
@@ -61,12 +68,38 @@ Set server URL before using the APIs below
 ```
 
 #### <u>Parameters</u>
-        Server URL. e.g. https://pmsweb-test.secux.io
+        Server URL: e.g. https://pmsweb-test.secux.io
+
+#### <u>Sample</u>
+```java
+    String serverUrl = "https://pmsweb-test.secux.io";
+    SecuXAccountManager accMgr = new SecuXAccountManager();
+    accMgr.setBaseServer(serverUrl);
+```
+
+### 1.2 Set administractor account and password
+
+    Set the administractor account, which is assigned to customers by SecuX
+
+#### <u>Declaration</u>
+```java
+    void setAdminAccount(String name, String password)
+```
+
+#### <u>Parameters</u>
+        name:       Administractor account name.
+        password:   Administractor account password.
+
+#### <u>Sample</u>
+```java
+    String serverUrl = "https://pmsweb-test.secux.io";
+    SecuXAccountManager accMgr = new SecuXAccountManager();
+    accMgr.setAdminAccount("test", "12345678");
+```
 
 
-### SecuXAccount related operations
 
-Must hava a user account to use the SecuX payment system. After successfully login the user account, the login session shall be validated for 30 minutes. If login session is timeout, relogin is required.
+### 2. SecuXAccount related operations
 
 Use SecuXAccountManager object to do the operations below
 ```java
@@ -75,7 +108,7 @@ private SecuXAccountManager mAccountManager = new SecuXAccountManager();
 
 ```
 
-1. <b>Get supported coin/token</b>
+2.1 <b>Get supported coin/token</b>
 
 #### <u>Declaration</u>
 ```java
@@ -105,7 +138,9 @@ private SecuXAccountManager mAccountManager = new SecuXAccountManager();
     }
 ```
 
-2. <b>User account registration</b>
+2.2 <b>User account registration</b>
+
+    Register a new user account with specified coin/token account. Please note the registration operation may take around 15 seconds to set up.
 
 #### <u>Declaration</u>
 ```java
@@ -140,7 +175,7 @@ private SecuXAccountManager mAccountManager = new SecuXAccountManager();
     }
 ```
 
-3. <b>User account login</b>
+2.3 <b>User account login</b>
 
 Note: **Login session is valid for 30 minutes**. To continue use after 30 minutes, relogin is required.
 
@@ -173,8 +208,9 @@ Note: **Login session is valid for 30 minutes**. To continue use after 30 minute
 
 ```
 
-4. <b>Get coin/token account list</b>  
-Must successfully login the server before calling the function
+2.4 <b>Get coin/token account list</b>  
+
+    Must successfully login the server before calling the function. Return all the coin/token accounts belongs to the login user.
 
 #### <u>Declaration</u>
 ```java
@@ -211,7 +247,9 @@ Must successfully login the server before calling the function
         showMessageInMain("Get coin token account list failed! Error: " + ret.second);
     }
 ```
-5. <b>Get coin/token account balance</b> 
+2.5 <b>Get coin/token account balance</b> 
+
+    Must successfully login the server before calling the function. Return the coin/token account balance
 
 #### <u>Declaration</u>
 ```java
@@ -260,8 +298,40 @@ Must successfully login the server before calling the function
     }
 ```
 
+2.6 <b>Change user login password</b>
 
-### SecuXPayment related operations
+    Must successfully login the server before calling the function. 
+
+#### <u>Declaration</u>
+```java
+    Pair<Integer, String> changePassword(String oldPwd, String newPwd)
+```
+#### <u>Parameter</u>
+```
+    oldPwd: User current login password.
+    newPwd: User new login password.
+```
+
+#### <u>Return value</u>
+```
+    The first return value shows the operation result. If the result is SecuXRequestOK,
+    registration is successful, otherwise the second return value contains an error message.
+```
+
+#### <u>Sample</u>
+```java
+    
+    Pair<Integer, String> ret = mAccountManager.changePassword("pwd1234", "pwd5678");
+    if (ret.first==SecuXServerRequestHandler.SecuXRequestOK){
+        showMessageInMain("Login successful!");
+    }else{
+        showMessageInMain("Login failed! Error: " + ret.second);
+    }
+
+```
+
+
+### 3. SecuXPayment related operations
 
 Use SecuXPaymentManager object to do the operations below
 
@@ -269,7 +339,7 @@ Use SecuXPaymentManager object to do the operations below
     SecuXPaymentManager mPaymentManager = new SecuXPaymentManager();
 ```
 
-1. <b>Implement SecuXPaymentManagerCallback functions</b>
+3.1 <b>Implement SecuXPaymentManagerCallback functions</b>
 ```
     public void paymentDone(final boolean ret, final String transactionCode, final String errorMsg)
     - Called when payment is completed. Returns payment result and error message.
@@ -285,7 +355,7 @@ Use SecuXPaymentManager object to do the operations below
     function is called.
 ```
 
-2. <b>Parsing payment QRCode / NFC message</b>
+3.2 <b>Parsing payment QRCode / NFC message</b>
 #### <u>Declaration</u>
 ```java
     Pair<Integer, String> getDeviceInfo(String paymentInfo)
@@ -330,7 +400,7 @@ Use SecuXPaymentManager object to do the operations below
         }
     }
 ```
-3. <b>Get store information</b>
+3.3 <b>Get store information</b>
 #### <u>Declaration</u>
 ```java
     Pair<Pair<Integer, String>, SecuXStoreInfo> getStoreInfo(String devIDHash)
@@ -353,7 +423,7 @@ Use SecuXPaymentManager object to do the operations below
 ```java
     Pair<Pair<Integer, String>, SecuXStoreInfo> storeInfoRet = mPaymentManager.getStoreInfo(mDevIDhash);
 ```
-4. <b>Do payment</b>
+3.4 <b>Do payment</b>
 #### <u>Declaration</u>
 ```java
     doPayment(String nonce, Context context, final SecuXUserAccount account, final String storeInfo, 
@@ -430,7 +500,7 @@ Use SecuXPaymentManager object to do the operations below
     };
 ```
 
-5. <b>Get all payment history</b>
+3.5 <b>Get all payment history</b>
 #### <u>Declaration</u>
 ```java
     Pair<Integer, String> getPaymentHistory(String token, int pageNum, int count, 
@@ -478,7 +548,7 @@ Use SecuXPaymentManager object to do the operations below
                 " amount=" + history.mAmount.toString() + history.mToken + " timestamp=" + history.mTransactionTime);
     }
 ```
-6. <b>Get payment history from transaction code</b>
+3.6 <b>Get payment history from transaction code</b>
 #### <u>Declaration</u>
 ```java
     Pair<Integer, String> getPaymentHistory(String token, String transactionCode, 
@@ -502,7 +572,7 @@ Use SecuXPaymentManager object to do the operations below
 
 ## Demo APP
 
-Please find more in our [demo app](https://github.com/secuxtech/secux-paymentdemo-v2-android)
+Please find more in our [demo app](https://github.com/secuxtech/secux-paymentdemo-for-ble-p22-android)
 
 ## Author
 
