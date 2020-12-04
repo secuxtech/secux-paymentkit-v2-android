@@ -47,14 +47,22 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        //bitsense_register
+        //!bitsense_register@168
+
+        //adminName = "secux_register";
+        //adminPwd = "!secux_register@123";
+
+        mAccountManager.setAdminAccount("secux_register", "!secux_register@123");
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 //User account operations
                 mAccount = new SecuXUserAccount("maochuntest1@secuxtech.com", "12345678");
 
-                //testAccount();
-                testPayment();
+                testAccount();
+                //testPayment();
                 //testRefundRefill();
                 //testSpringTreesAPIs();
 

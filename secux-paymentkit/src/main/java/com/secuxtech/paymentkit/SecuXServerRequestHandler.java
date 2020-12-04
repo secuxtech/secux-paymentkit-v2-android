@@ -37,8 +37,8 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
 
     private static String mToken = "";
 
-    private String mAdminName = "";
-    private String mAdminPassword = "";
+    private static String mAdminName = "";
+    private static String mAdminPassword = "";
 
     public static void setServerURL(String svrUrl){
         baseURL = svrUrl;
@@ -79,11 +79,17 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             adminName = mAdminName;
             adminPwd = mAdminPassword;
         }else{
+
+            /*
             adminName = "secux_register";
             adminPwd = "!secux_register@123";
             if (SecuXServerRequestHandler.baseURL.compareToIgnoreCase("https://pmsweb.secuxtech.com") == 0){
                 adminPwd = "168!Secux@168";
             }
+
+             */
+
+            return "";
         }
 
         try {
@@ -207,7 +213,16 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
     public Pair<Integer, String> getSupportedCoinTokens(){
         SecuXPaymentKitLogHandler.Log("getSupportedCoinTokens");
 
-        return this.processPostRequest(getSupportedSymbolUrl);
+        String adminToken = getAdminToken();
+
+        if (adminToken.length()==0){
+            SecuXPaymentKitLogHandler.Log("No token");
+            return new Pair<>(SecuXRequestFailed, "No token");
+        }
+
+        //return this.processPostRequest(getSupportedSymbolUrl);
+
+        return this.processPostRequest(getSupportedSymbolUrl, null, adminToken);
     }
 
     public Pair<Integer, String> getChainAccountList(){
