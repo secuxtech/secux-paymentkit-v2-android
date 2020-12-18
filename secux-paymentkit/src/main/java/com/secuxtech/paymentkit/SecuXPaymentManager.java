@@ -281,4 +281,39 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
         return new Pair<>(SecuXRequestFailed, ret.second);
 
     }
+
+
+    public Pair<Integer, String> generateEncryptedData(String ivKey, String userID, String devID, String coin, String token, String transID, String amount, String type){
+
+        Pair<Integer, String> encRet = mSecuXSvrReqHandler.encryptPaymentData(userID, devID, ivKey, coin, token, transID, amount, type);
+        if (encRet.first == SecuXRequestOK){
+            try {
+
+                JSONObject payRetJson = new JSONObject(encRet.second);
+                SecuXPaymentKitLogHandler.Log(SystemClock.uptimeMillis() + " Send server request done ");
+
+                int statusCode = payRetJson.getInt("statusCode");
+                String statusDesc = payRetJson.getString("statusDesc");
+
+                if (statusCode != 200){
+                    mPaymentPeripheralManager.requestDisconnect();
+                    return new Pair<>(SecuXRequestFailed, "Invalid reply status code " + statusCode);
+                }
+
+                String encryptedStr = payRetJson.getString("encryptedText");
+                return new Pair<>(SecuXRequestOK, encryptedStr);
+
+            }catch (Exception e){
+                SecuXPaymentKitLogHandler.Log(e.getLocalizedMessage());
+                mPaymentPeripheralManager.requestDisconnect();
+                return new Pair<>(SecuXRequestFailed, "Parsing encrypt data from server exception. " + encRet.second);
+            }
+        }
+
+        return encRet;
+
+
+    }
+
+
 }
