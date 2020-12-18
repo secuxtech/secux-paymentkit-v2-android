@@ -36,10 +36,11 @@ public class SecuXPaymentHistory {
     SecuXPaymentHistory(JSONObject hisJson) throws Exception{
         try{
             mID = hisJson.getInt("id");
-            mStoreID = hisJson.getInt("storeID");
-            mStoreName = hisJson.getString("storeName");
-            mStoreTel = hisJson.getString("storeTel");
-            mStoreAddress = hisJson.getString("storeAddress");
+
+            mStoreID = hisJson.optInt("storeID");
+            mStoreName = hisJson.optString("storeName");
+            mStoreTel = hisJson.optString("storeTel");
+            mStoreAddress = hisJson.optString("storeAddress");
 
             mUserAccountName = hisJson.getString("account");
             mTransactionCode = hisJson.getString("transactionCode");
@@ -64,10 +65,11 @@ public class SecuXPaymentHistory {
     void copyFrom(JSONObject hisJson) throws Exception {
         try {
             mID = hisJson.getInt("id");
-            mStoreID = hisJson.getInt("storeID");
-            mStoreName = hisJson.getString("storeName");
-            mStoreTel = hisJson.getString("storeTel");
-            mStoreAddress = hisJson.getString("storeAddress");
+
+            mStoreID = hisJson.optInt("storeID");
+            mStoreName = hisJson.optString("storeName");
+            mStoreTel = hisJson.optString("storeTel");
+            mStoreAddress = hisJson.optString("storeAddress");
 
             mUserAccountName = hisJson.getString("account");
             mTransactionCode = hisJson.getString("transactionCode");
