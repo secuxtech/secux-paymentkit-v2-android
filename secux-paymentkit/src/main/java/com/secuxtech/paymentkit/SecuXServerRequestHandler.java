@@ -24,13 +24,15 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
     static String balanceUrl = baseURL + "/api/Consumer/GetAccountBalance";
     static String balanceListUrl = baseURL + "/api/Consumer/GetAccountBalanceList";
     static String paymentUrl = baseURL + "/api/Consumer/Payment";
+    static String fiatPaymentUrl = baseURL + "/api/Consumer/GetFiatPaymentUrl";
+    static String checkFiatPaymentUrl = baseURL + "/api/Consumer/CheckFiatPaymentStatus";
     static String paymentHistoryUrl = baseURL + "/api/Consumer/GetPaymentHistory";
     static String getStoreUrl = baseURL + "/api/Terminal/GetStore";
     static String transferHistoryUrl = baseURL + "/api/Consumer/GetTxHistory";
     static String getDeviceInfoUrl = baseURL + "/api/Terminal/GetDeviceInfo";
     static String getSupportedSymbolUrl = baseURL + "/api/Terminal/GetSupportedSymbol";
     static String getChainAccountListUrl = baseURL + "/api/Consumer/GetChainAccountList";
-    static String accountOperationUrl = baseURL +  "/api/Consumer/BindingChainAccount";
+    static String accountOperationUrl = baseURL + "/api/Consumer/BindingChainAccount";
     static String refundUrl = baseURL + "/api/Consumer/Refund";
     static String refillUrl = baseURL + "/api/Consumer/Refill";
     static String encryptPaymentDataUrl = baseURL + "/api/B2B/ProduceCipher";
@@ -40,7 +42,7 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
     private static String mAdminName = "";
     private static String mAdminPassword = "";
 
-    public static void setServerURL(String svrUrl){
+    public static void setServerURL(String svrUrl) {
         baseURL = svrUrl;
         adminLoginUrl = baseURL + "/api/Admin/Login";
         registerUrl = baseURL + "/api/Consumer/Register";
@@ -50,13 +52,15 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
         balanceUrl = baseURL + "/api/Consumer/GetAccountBalance";
         balanceListUrl = baseURL + "/api/Consumer/GetAccountBalanceList";
         paymentUrl = baseURL + "/api/Consumer/Payment";
+        fiatPaymentUrl = baseURL + "/api/Consumer/GetFiatPaymentUrl";
+        checkFiatPaymentUrl = baseURL + "/api/Consumer/CheckFiatPaymentStatus";
         paymentHistoryUrl = baseURL + "/api/Consumer/GetPaymentHistory";
         getStoreUrl = baseURL + "/api/Terminal/GetStore";
         transferHistoryUrl = baseURL + "/api/Consumer/GetTxHistory";
         getDeviceInfoUrl = baseURL + "/api/Terminal/GetDeviceInfo";
         getSupportedSymbolUrl = baseURL + "/api/Terminal/GetSupportedSymbol";
         getChainAccountListUrl = baseURL + "/api/Consumer/GetChainAccountList";
-        accountOperationUrl = baseURL +  "/api/Consumer/BindingChainAccount";
+        accountOperationUrl = baseURL + "/api/Consumer/BindingChainAccount";
         refundUrl = baseURL + "/api/Consumer/Refund";
         refillUrl = baseURL + "/api/Consumer/Refill";
         encryptPaymentDataUrl = baseURL + "/api/B2B/ProduceCipher";
@@ -64,21 +68,21 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
         SecuXPaymentKitLogHandler.Log("setBaseServer " + svrUrl);
     }
 
-    public void setAdminAccount(String name, String password){
+    public void setAdminAccount(String name, String password) {
         SecuXPaymentKitLogHandler.Log("setAdminAccount");
 
         mAdminName = name;
         mAdminPassword = password;
     }
 
-    public String getAdminToken(){
+    public String getAdminToken() {
         SecuXPaymentKitLogHandler.Log("getAdminToken");
 
-        String adminName="", adminPwd="";
-        if (mAdminName.length() > 0 && mAdminPassword.length() > 0){
+        String adminName = "", adminPwd = "";
+        if (mAdminName.length() > 0 && mAdminPassword.length() > 0) {
             adminName = mAdminName;
             adminPwd = mAdminPassword;
-        }else{
+        } else {
 
             /*
             adminName = "secux_register";
@@ -104,23 +108,23 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
                 return token;
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             SecuXPaymentKitLogHandler.Log(e.getMessage());
         }
 
         return "";
     }
 
-    public Pair<Integer, String> userRegister(SecuXUserAccount userAccount, String coinType, String token){
+    public Pair<Integer, String> userRegister(SecuXUserAccount userAccount, String coinType, String token) {
         SecuXPaymentKitLogHandler.Log("userRegister");
         String adminToken = getAdminToken();
 
-        if (adminToken.length()==0){
+        if (adminToken.length() == 0) {
             SecuXPaymentKitLogHandler.Log("No token");
             return new Pair<>(SecuXRequestFailed, "No token");
         }
 
-        try{
+        try {
             JSONObject param = new JSONObject();
             param.put("account", userAccount.mAccountName);
             param.put("password", userAccount.mPassword);
@@ -135,21 +139,21 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
 
             return result;
 
-        }catch (Exception e){
-            SecuXPaymentKitLogHandler.Log( e.getMessage());
+        } catch (Exception e) {
+            SecuXPaymentKitLogHandler.Log(e.getMessage());
             return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
         }
     }
 
-    public Pair<Integer, String> changePassword(String oldPwd, String newPwd){
+    public Pair<Integer, String> changePassword(String oldPwd, String newPwd) {
         SecuXPaymentKitLogHandler.Log("changePassword");
 
-        try{
+        try {
             JSONObject param = new JSONObject();
             param.put("password", oldPwd);
             param.put("newPassword", newPwd);
             Pair<Integer, String> response = this.processPostRequest(changePwdUrl, param, mToken);
-            if (response.first==SecuXRequestOK){
+            if (response.first == SecuXRequestOK) {
                 //JSONObject responseJson = new JSONObject(response.second);
                 //String token = responseJson.getString("token");
                 //mToken = token;
@@ -157,22 +161,22 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
 
             return response;
 
-        }catch (Exception e){
-            SecuXPaymentKitLogHandler.Log( e.getMessage());
+        } catch (Exception e) {
+            SecuXPaymentKitLogHandler.Log(e.getMessage());
 
             return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
         }
     }
 
-    public Pair<Integer, String> userLogin(String account, String pwd){
+    public Pair<Integer, String> userLogin(String account, String pwd) {
         SecuXPaymentKitLogHandler.Log("userLogin");
 
-        try{
+        try {
             JSONObject param = new JSONObject();
             param.put("account", account);
             param.put("password", pwd);
             Pair<Integer, String> response = this.processPostRequest(userLoginUrl, param);
-            if (response.first==SecuXRequestOK){
+            if (response.first == SecuXRequestOK) {
                 JSONObject responseJson = new JSONObject(response.second);
                 String token = responseJson.getString("token");
                 mToken = token;
@@ -180,22 +184,22 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
 
             return response;
 
-        }catch (Exception e){
+        } catch (Exception e) {
             SecuXPaymentKitLogHandler.Log(e.getMessage());
 
             return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
         }
     }
 
-    public Pair<Integer, String> merchantLogin(String account, String pwd){
+    public Pair<Integer, String> merchantLogin(String account, String pwd) {
         SecuXPaymentKitLogHandler.Log("merchantLogin");
 
-        try{
+        try {
             JSONObject param = new JSONObject();
             param.put("account", account);
             param.put("password", pwd);
             Pair<Integer, String> response = this.processPostRequest(adminLoginUrl, param);
-            if (response.first==SecuXRequestOK){
+            if (response.first == SecuXRequestOK) {
                 JSONObject responseJson = new JSONObject(response.second);
                 String token = responseJson.getString("token");
                 mToken = token;
@@ -203,19 +207,19 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
 
             return response;
 
-        }catch (Exception e){
+        } catch (Exception e) {
             SecuXPaymentKitLogHandler.Log(e.getMessage());
 
             return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
         }
     }
 
-    public Pair<Integer, String> getSupportedCoinTokens(){
+    public Pair<Integer, String> getSupportedCoinTokens() {
         SecuXPaymentKitLogHandler.Log("getSupportedCoinTokens");
 
         String adminToken = getAdminToken();
 
-        if (adminToken.length()==0){
+        if (adminToken.length() == 0) {
             SecuXPaymentKitLogHandler.Log("No token");
             return new Pair<>(SecuXRequestFailed, "No token");
         }
@@ -225,10 +229,10 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
         return this.processPostRequest(getSupportedSymbolUrl, null, adminToken);
     }
 
-    public Pair<Integer, String> getChainAccountList(){
+    public Pair<Integer, String> getChainAccountList() {
         SecuXPaymentKitLogHandler.Log("getChainAccountList");
 
-        if (mToken.length()==0){
+        if (mToken.length() == 0) {
             SecuXPaymentKitLogHandler.Log("No token");
             return new Pair<>(SecuXRequestFailed, "No token");
         }
@@ -236,15 +240,15 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
         return this.processPostRequest(getChainAccountListUrl, null, mToken);
     }
 
-    public Pair<Integer, String> getAccountBalance(String cointype, String token){
+    public Pair<Integer, String> getAccountBalance(String cointype, String token) {
         SecuXPaymentKitLogHandler.Log("getAccountBalance " + cointype + " " + token);
 
-        if (mToken.length()==0){
+        if (mToken.length() == 0) {
             SecuXPaymentKitLogHandler.Log("No token");
             return new Pair<>(SecuXRequestFailed, "No token");
         }
 
-        try{
+        try {
             JSONObject param = new JSONObject();
             //param.put("account", account);
             param.put("coinType", cointype);
@@ -253,7 +257,7 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
 
             return response;
 
-        }catch (Exception e){
+        } catch (Exception e) {
             SecuXPaymentKitLogHandler.Log(e.getMessage());
             return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
         }
@@ -284,15 +288,15 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
 
 
      */
-    public Pair<Integer, String> getStoreInfo(String devID){
+    public Pair<Integer, String> getStoreInfo(String devID) {
         SecuXPaymentKitLogHandler.Log("getStoreInfo");
 
-        if (mToken.length()==0){
+        if (mToken.length() == 0) {
             SecuXPaymentKitLogHandler.Log("No token");
             return new Pair<>(SecuXRequestFailed, "No token");
         }
 
-        try{
+        try {
             JSONObject param = new JSONObject();
             param.put("deviceIDhash", devID);
 
@@ -300,23 +304,23 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
 
             return response;
 
-        }catch (Exception e){
+        } catch (Exception e) {
             SecuXPaymentKitLogHandler.Log(e.getMessage());
             return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
         }
 
     }
 
-    public Pair<Integer, String> doPayment(String sender, String storeName, PaymentInfo payInfo){
+    public Pair<Integer, String> doPayment(String sender, String storeName, PaymentInfo payInfo) {
         SecuXPaymentKitLogHandler.Log("doPayment");
-        if (mToken.length()==0){
+        if (mToken.length() == 0) {
             SecuXPaymentKitLogHandler.Log("No token");
             return new Pair<>(SecuXRequestFailed, "No token");
         }
 
         TimeZone tz = TimeZone.getDefault();
 
-        try{
+        try {
             JSONObject param = new JSONObject();
             param.put("ivKey", payInfo.mIVKey);
             param.put("memo", "");
@@ -325,29 +329,29 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             param.put("coinType", payInfo.mCoinType);
             //param.put("account", sender);
             param.put("receiver", payInfo.mDevID);
-            param.put("timeZone", ""+tz.getRawOffset()/1000);
+            param.put("timeZone", "" + tz.getRawOffset() / 1000);
 
             //SecuXPaymentKitLogHandler.Log(param.toString());
 
             Pair<Integer, String> response = this.processPostRequest(paymentUrl, param, mToken, 20000);
             return response;
 
-        }catch (Exception e){
+        } catch (Exception e) {
             SecuXPaymentKitLogHandler.Log(e.getMessage());
             return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
         }
     }
 
-    public Pair<Integer, String> doPayment(PaymentInfo payInfo){
+    public Pair<Integer, String> doPayment(PaymentInfo payInfo) {
         SecuXPaymentKitLogHandler.Log("doPayment");
-        if (mToken.length()==0){
+        if (mToken.length() == 0) {
             SecuXPaymentKitLogHandler.Log("No token");
             return new Pair<>(SecuXRequestFailed, "No token");
         }
 
         TimeZone tz = TimeZone.getDefault();
 
-        try{
+        try {
             JSONObject param = new JSONObject();
             param.put("ivKey", payInfo.mIVKey);
             param.put("memo", "");
@@ -356,27 +360,81 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             param.put("coinType", payInfo.mCoinType);
             //param.put("account", sender);
             param.put("receiver", payInfo.mDevID);
-            param.put("timeZone", ""+tz.getRawOffset()/1000);
+            param.put("timeZone", "" + tz.getRawOffset() / 1000);
 
             //SecuXPaymentKitLogHandler.Log(param.toString());
 
             Pair<Integer, String> response = this.processPostRequest(paymentUrl, param, mToken, 20000);
             return response;
 
-        }catch (Exception e){
+        } catch (Exception e) {
             SecuXPaymentKitLogHandler.Log(e.getMessage());
             return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
         }
     }
 
-    public Pair<Integer, String> doTransfer(String cointype, String token, String feesymbol, String receiver, String amount){
+    public Pair<Integer, String> getFiatPaymentUrl(PaymentInfo payInfo) {
+        SecuXPaymentKitLogHandler.Log("getFiatPaymentUrl");
+        if (mToken.length() == 0) {
+            SecuXPaymentKitLogHandler.Log("No token");
+            return new Pair<>(SecuXRequestFailed, "No token");
+        }
+
+        TimeZone tz = TimeZone.getDefault();
+
+        try {
+            JSONObject param = new JSONObject();
+            param.put("payChannel", payInfo.mPayChannel);
+            param.put("amount", payInfo.mAmount);
+            param.put("productName", payInfo.mProductName);
+            param.put("deviceId", payInfo.mDevID);
+            param.put("timeZone", "" + tz.getRawOffset() / 1000);
+
+            //SecuXPaymentKitLogHandler.Log(param.toString());
+
+            Pair<Integer, String> response = this.processPostRequest(fiatPaymentUrl, param, mToken, 20000);
+            return response;
+
+        } catch (Exception e) {
+            SecuXPaymentKitLogHandler.Log(e.getMessage());
+            return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
+        }
+    }
+
+    public Pair<Integer, String> checkFiatPayment(PaymentInfo payInfo) {
+        SecuXPaymentKitLogHandler.Log("doFiatPayment");
+        if (mToken.length() == 0) {
+            SecuXPaymentKitLogHandler.Log("No token");
+            return new Pair<>(SecuXRequestFailed, "No token");
+        }
+
+        TimeZone tz = TimeZone.getDefault();
+
+        try {
+            JSONObject param = new JSONObject();
+            param.put("ivKey", payInfo.mIVKey);
+            param.put("payChannel", payInfo.mPayChannel);
+            param.put("orderId", payInfo.mOrderId);
+            param.put("deviceId", payInfo.mDevID);
+            param.put("timeZone", "" + tz.getRawOffset() / 1000);
+
+            Pair<Integer, String> response = this.processPostRequest(checkFiatPaymentUrl, param, mToken, 20000);
+            return response;
+
+        } catch (Exception e) {
+            SecuXPaymentKitLogHandler.Log(e.getMessage());
+            return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
+        }
+    }
+
+    public Pair<Integer, String> doTransfer(String cointype, String token, String feesymbol, String receiver, String amount) {
         SecuXPaymentKitLogHandler.Log("doTransfer");
-        if (mToken.length()==0){
+        if (mToken.length() == 0) {
             SecuXPaymentKitLogHandler.Log("No token");
             return new Pair<>(SecuXRequestFailed, "No token");
         }
 
-        try{
+        try {
             JSONObject param = new JSONObject();
             param.put("coinType", cointype);
             param.put("symbol", token);
@@ -388,20 +446,20 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             Pair<Integer, String> response = this.processPostRequest(transferUrl, param, mToken, 15000);
             return response;
 
-        }catch (Exception e){
+        } catch (Exception e) {
             SecuXPaymentKitLogHandler.Log(e.getMessage());
             return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
         }
     }
 
-    public Pair<Integer, String> getPaymentHistory(String token, String transactionCode){
+    public Pair<Integer, String> getPaymentHistory(String token, String transactionCode) {
         SecuXPaymentKitLogHandler.Log("getPaymentHistory " + token + " " + transactionCode);
-        if (mToken.length()==0){
+        if (mToken.length() == 0) {
             SecuXPaymentKitLogHandler.Log("No token");
             return new Pair<>(SecuXRequestFailed, "No token");
         }
 
-        try{
+        try {
             JSONObject subparam = new JSONObject();
             subparam.put("offset", 0);
             subparam.put("limit", 10);
@@ -420,20 +478,20 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             Pair<Integer, String> response = this.processPostRequest(paymentHistoryUrl, param, mToken);
             return response;
 
-        }catch (Exception e){
+        } catch (Exception e) {
             SecuXPaymentKitLogHandler.Log(e.getMessage());
             return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
         }
     }
 
-    public Pair<Integer, String> getPaymentHistory(String token, int pageIdx, int pageItemCount){
+    public Pair<Integer, String> getPaymentHistory(String token, int pageIdx, int pageItemCount) {
         SecuXPaymentKitLogHandler.Log("getPaymentHistory");
-        if (mToken.length()==0){
+        if (mToken.length() == 0) {
             SecuXPaymentKitLogHandler.Log("No token");
             return new Pair<>(SecuXRequestFailed, "No token");
         }
 
-        try{
+        try {
             JSONObject subparam = new JSONObject();
             subparam.put("offset", pageIdx);
             subparam.put("limit", pageItemCount);
@@ -452,20 +510,20 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             Pair<Integer, String> response = this.processPostRequest(paymentHistoryUrl, param, mToken);
             return response;
 
-        }catch (Exception e){
+        } catch (Exception e) {
             SecuXPaymentKitLogHandler.Log(e.getMessage());
             return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
         }
     }
 
-    public Pair<Integer, String> getTransferHistory(String cointype, String symboltype, int page, int count){
+    public Pair<Integer, String> getTransferHistory(String cointype, String symboltype, int page, int count) {
         SecuXPaymentKitLogHandler.Log("getTransferHistory");
-        if (mToken.length()==0){
+        if (mToken.length() == 0) {
             Log.e(TAG, "No token");
             return new Pair<>(SecuXRequestFailed, "No token");
         }
 
-        try{
+        try {
             JSONObject param = new JSONObject();
             //param.put("account", account.mAccountName);
             param.put("coinType", cointype);
@@ -476,7 +534,7 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             Pair<Integer, String> response = this.processPostRequest(transferHistoryUrl, param, mToken);
             return response;
 
-        }catch (Exception e){
+        } catch (Exception e) {
             SecuXPaymentKitLogHandler.Log(e.getMessage());
             return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
         }
@@ -507,32 +565,32 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
     }
     */
 
-    public Pair<Integer, String> getDeviceInfo(String paymentInfo){
+    public Pair<Integer, String> getDeviceInfo(String paymentInfo) {
         SecuXPaymentKitLogHandler.Log("getDeviceInfo");
-        if (mToken.length()==0){
+        if (mToken.length() == 0) {
             SecuXPaymentKitLogHandler.Log("No token");
             return new Pair<>(SecuXRequestFailed, "No token");
         }
 
-        try{
+        try {
             JSONObject param = new JSONObject(paymentInfo);
             Pair<Integer, String> response = this.processPostRequest(getDeviceInfoUrl, param, mToken);
             return response;
 
-        }catch (Exception e){
+        } catch (Exception e) {
             SecuXPaymentKitLogHandler.Log(e.getMessage());
             return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
         }
     }
 
-    public Pair<Integer, String> accountOperation(String coinType, String accountName, String desc, String type){
+    public Pair<Integer, String> accountOperation(String coinType, String accountName, String desc, String type) {
         SecuXPaymentKitLogHandler.Log("accountOperation");
-        if (mToken.length()==0){
+        if (mToken.length() == 0) {
             SecuXPaymentKitLogHandler.Log("No token");
             return new Pair<>(SecuXRequestFailed, "No token");
         }
 
-        try{
+        try {
             JSONObject param = new JSONObject();
             param.put("coinType", coinType);
             param.put("account", accountName);
@@ -541,13 +599,13 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             Pair<Integer, String> response = this.processPostRequest(accountOperationUrl, param, mToken);
             return response;
 
-        }catch (Exception e){
+        } catch (Exception e) {
             SecuXPaymentKitLogHandler.Log(e.getMessage());
             return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
         }
     }
 
-    public Pair<Integer, String> refund(String devIDHash, String ivKey, String dataHash){
+    public Pair<Integer, String> refund(String devIDHash, String ivKey, String dataHash) {
         /*
             "deviceIDhash": "592e41d67ee326f82fd6be518fd488d752f5a1b9",
 	        "ivKey": "GfJasMOeUhJ6PvJh",
@@ -556,31 +614,31 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
 
         SecuXPaymentKitLogHandler.Log("refund");
 
-        if (mToken.length()==0){
+        if (mToken.length() == 0) {
             SecuXPaymentKitLogHandler.Log("No token");
             return new Pair<>(SecuXRequestFailed, "No token");
         }
 
         TimeZone tz = TimeZone.getDefault();
-        try{
+        try {
             JSONObject param = new JSONObject();
             param.put("deviceIDhash", devIDHash);
             param.put("ivKey", ivKey);
             param.put("hashTx", dataHash);
-            param.put("timeZone", ""+tz.getRawOffset()/1000);
+            param.put("timeZone", "" + tz.getRawOffset() / 1000);
 
             Log.i(TAG, "Refund param " + param.toString());
             Pair<Integer, String> response = this.processPostRequest(refundUrl, param, mToken);
             return response;
 
-        }catch (Exception e){
+        } catch (Exception e) {
             SecuXPaymentKitLogHandler.Log(e.getMessage());
             return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
         }
 
     }
 
-    public Pair<Integer, String> refill(String devIDHash, String ivKey, String dataHash){
+    public Pair<Integer, String> refill(String devIDHash, String ivKey, String dataHash) {
         /*
             "deviceIDhash": "592e41d67ee326f82fd6be518fd488d752f5a1b9",
 	        "ivKey": "GfJasMOeUhJ6PvJh",
@@ -589,38 +647,38 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
 
         SecuXPaymentKitLogHandler.Log("refill");
 
-        if (mToken.length()==0){
+        if (mToken.length() == 0) {
             Log.e(TAG, "No token");
             return new Pair<>(SecuXRequestFailed, "No token");
         }
 
         TimeZone tz = TimeZone.getDefault();
-        try{
+        try {
             JSONObject param = new JSONObject();
             param.put("deviceIDhash", devIDHash);
             param.put("ivKey", ivKey);
             param.put("hashTx", dataHash);
-            param.put("timeZone", ""+tz.getRawOffset()/1000);
+            param.put("timeZone", "" + tz.getRawOffset() / 1000);
 
             Log.i(TAG, "Refill param: " + param.toString());
             Pair<Integer, String> response = this.processPostRequest(refillUrl, param, mToken);
             return response;
 
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
         }
 
     }
 
-    public Pair<Integer, String> encryptPaymentData(String sender, String devID, String ivKey, String coin, String token, String transID, String amount, String memo){
+    public Pair<Integer, String> encryptPaymentData(String sender, String devID, String ivKey, String coin, String token, String transID, String amount, String memo) {
         SecuXPaymentKitLogHandler.Log("encryptPaymentData");
-        if (mToken.length()==0){
+        if (mToken.length() == 0) {
             SecuXPaymentKitLogHandler.Log("No token");
             return new Pair<>(SecuXRequestFailed, "No token");
         }
 
-        try{
+        try {
             JSONObject param = new JSONObject();
             param.put("ivKey", ivKey);
             param.put("coinType", coin);
@@ -635,7 +693,7 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             Pair<Integer, String> response = this.processPostRequest(encryptPaymentDataUrl, param, mToken);
             return response;
 
-        }catch (Exception e){
+        } catch (Exception e) {
             SecuXPaymentKitLogHandler.Log(e.getMessage());
             return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
         }

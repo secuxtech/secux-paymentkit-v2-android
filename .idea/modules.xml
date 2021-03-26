@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/example/example.iml" filepath="$PROJECT_DIR$/example/example.iml" group="secux-paymentkit-example/example" />
-      <module fileurl="file://$PROJECT_DIR$/secux-paymentkit/secux-paymentkit.iml" filepath="$PROJECT_DIR$/secux-paymentkit/secux-paymentkit.iml" group="secux-paymentkit-example/secux-paymentkit" />
-      <module fileurl="file://$PROJECT_DIR$/secux-paymentkit-example.iml" filepath="$PROJECT_DIR$/secux-paymentkit-example.iml" group="secux-paymentkit-example" />
+      <module fileurl="file://$PROJECT_DIR$/secux-paymentkit-example.iml" filepath="$PROJECT_DIR$/secux-paymentkit-example.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/example/secux-paymentkit-example.example.iml" filepath="$PROJECT_DIR$/.idea/modules/example/secux-paymentkit-example.example.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/secux-paymentkit/secux-paymentkit-example.secux-paymentkit.iml" filepath="$PROJECT_DIR$/.idea/modules/secux-paymentkit/secux-paymentkit-example.secux-paymentkit.iml" />
     </modules>
   </component>
 </project>

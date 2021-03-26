@@ -4,16 +4,17 @@ package com.secuxtech.paymentkit;
  * Created by maochuns.sun@gmail.com on 2020-02-10
  */
 
-import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
+import android.net.Uri;
 import android.os.SystemClock;
 import android.util.Base64;
 import android.util.Log;
 import android.util.Pair;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /*
@@ -34,16 +35,12 @@ import com.secux.payment.sdk.listener.OnSendStringCompleteListener;
 
 import com.secuxtech.paymentdevicekit.MachineIoControlParam;
 import com.secuxtech.paymentdevicekit.PaymentPeripheralManager;
-import com.secuxtech.paymentdevicekit.SecuXBLEManager;
 import com.secuxtech.paymentdevicekit.SecuXPaymentUtility;
 
 
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
 
 import static com.secuxtech.paymentdevicekit.PaymentPeripheralManager.SecuX_Peripheral_Operation_OK;
-import static com.secuxtech.paymentdevicekit.PaymentPeripheralManager.SecuX_Peripheral_Operation_fail;
 import static com.secuxtech.paymentkit.RestRequestHandler.TAG;
 
 class PaymentInfo{
@@ -52,6 +49,9 @@ class PaymentInfo{
     String mAmount;
     String mDevID;
     String mIVKey;
+    String mProductName;
+    String mOrderId;
+    String mPayChannel;
 }
 
 class PaymentDevConfigInfo{
@@ -76,6 +76,7 @@ public class SecuXPaymentManagerBase {
     private String mStoreInfo = "";
     private Bitmap mStoreLogo = null;
     private ArrayList<String> mStoreSupportedCoinTokenArr = new ArrayList<>();
+    public static boolean mIsCompleted = false;
 
     SecuXPaymentManagerBase(){
         Log.i(TAG, "SecuXPaymentManagerBase");
@@ -220,6 +221,9 @@ public class SecuXPaymentManagerBase {
             mPaymentInfo.mDevID = jsonInfo.getString("deviceID");
             mPaymentInfo.mCoinType = jsonInfo.getString("coinType");
             mPaymentInfo.mToken = jsonInfo.getString("token");
+            mPaymentInfo.mProductName = jsonInfo.getString("productName");
+            mPaymentInfo.mPayChannel = jsonInfo.getString("payChannel");
+//            mPaymentInfo.mOrderId = jsonInfo.getString("orderId");
 
         }catch (Exception e){
             return false;
@@ -305,7 +309,34 @@ public class SecuXPaymentManagerBase {
         SecuXPaymentKitLogHandler.Log(SystemClock.uptimeMillis() + " sendInfoToDevice amount=" + mPaymentInfo.mAmount);
 
         handlePaymentStatus(mPaymentInfo.mToken + " transferring...");
-        Pair<Integer, String> payRet = mSecuXSvrReqHandler.doPayment(mAccount.mAccountName, mPaymentDevConfigInfo.mName, mPaymentInfo);
+        Pair<Integer, String> payRet;
+        if(mPaymentInfo.mCoinType.equalsIgnoreCase("TWD")){
+            payRet = mSecuXSvrReqHandler.getFiatPaymentUrl(mPaymentInfo);
+            try {
+                JSONObject payRetJson = new JSONObject(payRet.second);
+
+                mPaymentInfo.mOrderId = payRetJson.getString("orderId");
+//                String url = "http://www.example.com";
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(payRetJson.getString( "paymentUrl")));
+                mContext.startActivity(intent);
+                int time = 1;
+                while(!mIsCompleted){
+                    if(time > mPaymentDevConfigInfo.mConnTimeout){
+                        payRet = new Pair<Integer, String>(SecuXServerRequestHandler.SecuXRequestFailed, "consumer payment time out");
+                        throw new InterruptedException("consumer payment time out");
+                    }
+                    Thread.sleep(1*1000);
+                    time++;
+                }
+                payRet = mSecuXSvrReqHandler.checkFiatPayment(mPaymentInfo);
+            } catch (JSONException | InterruptedException e) {
+                e.printStackTrace();
+                handlePaymentDone(false, payRet.second);
+            }
+        }else {
+            payRet = mSecuXSvrReqHandler.doPayment(mAccount.mAccountName, mPaymentDevConfigInfo.mName, mPaymentInfo);
+        }
         if (payRet.first == SecuXServerRequestHandler.SecuXRequestUnauthorized){
             mPaymentPeripheralManager.requestDisconnect();
             handleAccountUnauthorized();
