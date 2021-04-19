@@ -671,7 +671,7 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
 
     }
 
-    public Pair<Integer, String> encryptPaymentData(String sender, String devID, String ivKey, String coin, String token, String transID, String amount, String memo) {
+    public Pair<Integer, String> encryptPaymentData(String sender, String devID, String ivKey, String coin, String token, String transID, String amount, String memo, String timeZone) {
         SecuXPaymentKitLogHandler.Log("encryptPaymentData");
         if (mToken.length() == 0) {
             SecuXPaymentKitLogHandler.Log("No token");
@@ -688,6 +688,8 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             param.put("transactionId", transID);
             param.put("amount", amount);
             param.put("memo", memo);
+            param.put("timeZone", timeZone);
+
 
             Log.i(TAG, "encryptPaymentData param: " + param.toString());
             Pair<Integer, String> response = this.processPostRequest(encryptPaymentDataUrl, param, mToken);

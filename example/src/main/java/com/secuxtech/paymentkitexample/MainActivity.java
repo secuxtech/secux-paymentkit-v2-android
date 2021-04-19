@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
             Pair<Pair<Integer, String>, SecuXStoreInfo> storeInfo = mPaymentManager.getStoreInfo("296ec7daa1dd7460d384471ec52127492bf45f9f");
             if (storeInfo.first.first == SecuXServerRequestHandler.SecuXRequestOK){
                 Pair<Integer, String> encRet = mPaymentManager.doActivity(mContext, "secuxdemo", storeInfo.second.mDevID,
-                        "LBR", "LBR", "Test1234", "1", "41395f47", "payment");
+                        "LBR", "LBR", "Test1234", "1", "41395f47", "payment", "8");
 
                 Log.i("", encRet.second);
             }

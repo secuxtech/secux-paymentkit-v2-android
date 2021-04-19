@@ -229,7 +229,7 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
         return new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, error);
     }
 
-    public Pair<Integer, String> doActivity(Context context, String userID, String devID, String coin, String token, String transID, String amount, String nonce, String type){
+    public Pair<Integer, String> doActivity(Context context, String userID, String devID, String coin, String token, String transID, String amount, String nonce, String type, String timeZone){
         SecuXPaymentKitLogHandler.Log(SystemClock.uptimeMillis() + " doActivity " + devID);
         byte[] code = SecuXPaymentUtility.hexStringToData(nonce);
         //Pair<Integer, String> ret = mPaymentPeripheralManager.doGetIVKey(code, context, 10,
@@ -240,7 +240,7 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
         if (ret.first == SecuX_Peripheral_Operation_OK){
             String ivKey = ret.second;
 
-            Pair<Integer, String> encRet = mSecuXSvrReqHandler.encryptPaymentData(userID, devID, ivKey, coin, token, transID, amount, type);
+            Pair<Integer, String> encRet = mSecuXSvrReqHandler.encryptPaymentData(userID, devID, ivKey, coin, token, transID, amount, type, timeZone);
             if (encRet.first == SecuXRequestOK){
                 try {
 
@@ -283,9 +283,9 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
     }
 
 
-    public Pair<Integer, String> generateEncryptedData(String ivKey, String userID, String devID, String coin, String token, String transID, String amount, String type){
+    public Pair<Integer, String> generateEncryptedData(String ivKey, String userID, String devID, String coin, String token, String transID, String amount, String type, String timeZone){
 
-        Pair<Integer, String> encRet = mSecuXSvrReqHandler.encryptPaymentData(userID, devID, ivKey, coin, token, transID, amount, type);
+        Pair<Integer, String> encRet = mSecuXSvrReqHandler.encryptPaymentData(userID, devID, ivKey, coin, token, transID, amount, type, timeZone);
         if (encRet.first == SecuXRequestOK){
             try {
 
