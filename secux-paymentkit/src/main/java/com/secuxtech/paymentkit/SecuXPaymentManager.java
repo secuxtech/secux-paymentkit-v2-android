@@ -68,6 +68,18 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
         }
     }
 
+    public void doDePay(Context context, final String nonce, final String address, final String storeInfo, final String privateKey, final String paymentInfo){
+        SecuXPaymentKitLogHandler.Log("doDePay");
+        this.mContext = context;
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                doDePay(nonce, address, storeInfo, privateKey, paymentInfo);
+            }
+        }).start();
+    }
+
     public void doPayment(Context context, final SecuXUserAccount account, final String storeInfo, final String paymentInfo){
         SecuXPaymentKitLogHandler.Log("doPayment");
         this.mContext = context;

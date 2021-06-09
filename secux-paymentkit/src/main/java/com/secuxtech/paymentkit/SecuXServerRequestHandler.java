@@ -36,6 +36,8 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
     static String refundUrl = baseURL + "/api/Consumer/Refund";
     static String refillUrl = baseURL + "/api/Consumer/Refill";
     static String encryptPaymentDataUrl = baseURL + "/api/B2B/ProduceCipher";
+    static String generateRawTransactionUrl = baseURL + "/api/Common/GenerateRawTransaction";
+    static String dePayUrl = baseURL + "/api/Common/DePay";
 
     private static String mToken = "";
 
@@ -419,6 +421,47 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             param.put("timeZone", "" + tz.getRawOffset() / 1000);
 
             Pair<Integer, String> response = this.processPostRequest(checkFiatPaymentUrl, param, mToken, 20000);
+            return response;
+
+        } catch (Exception e) {
+            SecuXPaymentKitLogHandler.Log(e.getMessage());
+            return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
+        }
+    }
+
+    public Pair<Integer, String> generateRawTransaction(String address, PaymentInfo payInfo) {
+        SecuXPaymentKitLogHandler.Log("generateRawTransaction");
+        try {
+            JSONObject param = new JSONObject();
+            param.put("sender", address);
+            param.put("receiver", payInfo.mDevID);
+            param.put("coinType", payInfo.mCoinType);
+            param.put("symbol", payInfo.mToken);
+            param.put("amount", payInfo.mAmount);
+
+            Pair<Integer, String> response = this.processPostRequest(generateRawTransactionUrl, param, mToken, 20000);
+            return response;
+
+        } catch (Exception e) {
+            SecuXPaymentKitLogHandler.Log(e.getMessage());
+            return new Pair<>(SecuXRequestFailed, e.getLocalizedMessage());
+        }
+    }
+
+    public Pair<Integer, String> dePay(String address, String paymentToken, String signHash, PaymentInfo payInfo) {
+        SecuXPaymentKitLogHandler.Log("dePay");
+        try {
+            JSONObject param = new JSONObject();
+            param.put("sender", address);
+            param.put("receiver", payInfo.mDevID);
+            param.put("coinType", payInfo.mCoinType);
+            param.put("symbol", payInfo.mToken);
+            param.put("amount", payInfo.mAmount);
+            param.put("ivKey", payInfo.mIVKey);
+            param.put("paymentToken", paymentToken);
+            param.put("signHash", signHash);
+
+            Pair<Integer, String> response = this.processPostRequest(dePayUrl, param, mToken, 20000);
             return response;
 
         } catch (Exception e) {
