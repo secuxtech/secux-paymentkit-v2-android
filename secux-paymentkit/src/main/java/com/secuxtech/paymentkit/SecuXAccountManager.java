@@ -182,13 +182,15 @@ public class SecuXAccountManager {
                     JSONArray tokenJsonArr = itemJson.getJSONArray("symbol");
                     String action = itemJson.getString("actionType");
 
-                    SecuXCoinTokenBalance zeroBalance = new SecuXCoinTokenBalance(new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
-                    Map<String, SecuXCoinTokenBalance> tokenBalanceMap = new HashMap<>();
+
+
                     for(int j=0; j<tokenJsonArr.length(); j++){
+                        SecuXCoinTokenBalance zeroBalance = new SecuXCoinTokenBalance(new BigDecimal(0), new BigDecimal(0), new BigDecimal(0));
+                        Map<String, SecuXCoinTokenBalance> tokenBalanceMap = new HashMap<>();
                         tokenBalanceMap.put(tokenJsonArr.getString(j), zeroBalance);
+                        SecuXCoinAccount coinAccount = new SecuXCoinAccount(accName, coinType, tokenJsonArr.getString(j), action, tokenBalanceMap);
+                        userAccount.mCoinAccountArr.add(coinAccount);
                     }
-                    SecuXCoinAccount coinAccount = new SecuXCoinAccount(accName, coinType, action, tokenBalanceMap);
-                    userAccount.mCoinAccountArr.add(coinAccount);
                 }
 
             }catch (Exception e){
@@ -215,7 +217,7 @@ public class SecuXAccountManager {
                 BigDecimal usdBlance = new BigDecimal(responseJson.getString("balance_usd"));
                 String accName = responseJson.getString("accountName");
 
-                SecuXCoinAccount coinAcc = userAccount.getCoinAccount(coinType);
+                SecuXCoinAccount coinAcc = userAccount.getCoinAccount(coinType, token);
                 if (coinAcc != null) {
                     coinAcc.mAccountName = accName;
                     Boolean ret = coinAcc.updateTokenBalance(token, balance, formattedBalance, usdBlance);

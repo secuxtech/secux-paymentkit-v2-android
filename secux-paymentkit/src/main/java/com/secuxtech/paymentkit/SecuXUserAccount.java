@@ -38,11 +38,11 @@ public class SecuXUserAccount {
         }
     }
     
-    public SecuXCoinAccount getCoinAccount(String coinType){
+    public SecuXCoinAccount getCoinAccount(String coinType, String token){
 
         for(int i=0; i<mCoinAccountArr.size(); i++){
             SecuXCoinAccount account = mCoinAccountArr.get(i);
-            if (account.mCoinType.compareTo(coinType)==0){
+            if (account.mCoinType.compareTo(coinType)==0 && account.mToken.compareTo(token)==0){
                 return account;
             }
         }

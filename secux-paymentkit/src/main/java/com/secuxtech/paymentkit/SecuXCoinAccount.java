@@ -11,14 +11,16 @@ import java.util.Set;
 
 public class SecuXCoinAccount {
     public String mCoinType = "";
+    public String mToken = "";
     public String mAccountName = "";
     public String mAccountType = "";
 
     public Map<String, SecuXCoinTokenBalance> mTokenBalanceMap = new HashMap<>();
 
-    SecuXCoinAccount(String accName, String coinType, String acctype, Map<String, SecuXCoinTokenBalance> symbolBalance){
+    SecuXCoinAccount(String accName, String coinType, String token, String acctype, Map<String, SecuXCoinTokenBalance> symbolBalance){
         mAccountName = accName;
         mCoinType = coinType;
+        mToken = token;
         mAccountType = acctype;
         mTokenBalanceMap.putAll(symbolBalance);
     }

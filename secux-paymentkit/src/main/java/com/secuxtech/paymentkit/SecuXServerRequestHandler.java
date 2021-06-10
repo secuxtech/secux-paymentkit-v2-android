@@ -36,8 +36,8 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
     static String refundUrl = baseURL + "/api/Consumer/Refund";
     static String refillUrl = baseURL + "/api/Consumer/Refill";
     static String encryptPaymentDataUrl = baseURL + "/api/B2B/ProduceCipher";
-    static String generateRawTransactionUrl = baseURL + "/api/Common/GenerateRawTransaction";
-    static String dePayUrl = baseURL + "/api/Common/DePay";
+    static String generateRawTransactionUrl = baseURL + "/api/Consumer/GenerateRawTransaction";
+    static String dePayUrl = baseURL + "/api/Consumer/DePay";
 
     private static String mToken = "";
 
@@ -431,6 +431,10 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
 
     public Pair<Integer, String> generateRawTransaction(String address, PaymentInfo payInfo) {
         SecuXPaymentKitLogHandler.Log("generateRawTransaction");
+        if (mToken.length() == 0) {
+            SecuXPaymentKitLogHandler.Log("No token");
+            return new Pair<>(SecuXRequestFailed, "No token");
+        }
         try {
             JSONObject param = new JSONObject();
             param.put("sender", address);
@@ -450,6 +454,10 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
 
     public Pair<Integer, String> dePay(String address, String paymentToken, String signHash, PaymentInfo payInfo) {
         SecuXPaymentKitLogHandler.Log("dePay");
+        if (mToken.length() == 0) {
+            SecuXPaymentKitLogHandler.Log("No token");
+            return new Pair<>(SecuXRequestFailed, "No token");
+        }
         try {
             JSONObject param = new JSONObject();
             param.put("sender", address);
