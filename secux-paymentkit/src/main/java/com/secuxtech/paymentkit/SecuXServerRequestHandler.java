@@ -429,7 +429,7 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
         }
     }
 
-    public Pair<Integer, String> generateRawTransaction(String address, PaymentInfo payInfo) {
+    public Pair<Integer, String> generateRawTransaction(String sender, String deviceId, String coinType, String symbol, String amount) {
         SecuXPaymentKitLogHandler.Log("generateRawTransaction");
         if (mToken.length() == 0) {
             SecuXPaymentKitLogHandler.Log("No token");
@@ -437,11 +437,11 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
         }
         try {
             JSONObject param = new JSONObject();
-            param.put("sender", address);
-            param.put("receiver", payInfo.mDevID);
-            param.put("coinType", payInfo.mCoinType);
-            param.put("symbol", payInfo.mToken);
-            param.put("amount", payInfo.mAmount);
+            param.put("sender", sender);
+            param.put("receiver", deviceId);
+            param.put("coinType", coinType);
+            param.put("symbol", symbol);
+            param.put("amount", amount);
 
             Pair<Integer, String> response = this.processPostRequest(generateRawTransactionUrl, param, mToken, 20000);
             return response;
@@ -452,7 +452,7 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
         }
     }
 
-    public Pair<Integer, String> dePay(String address, String paymentToken, String signHash, PaymentInfo payInfo) {
+    public Pair<Integer, String> dePay(PaymentInfo payInfo) {
         SecuXPaymentKitLogHandler.Log("dePay");
         if (mToken.length() == 0) {
             SecuXPaymentKitLogHandler.Log("No token");
@@ -460,14 +460,14 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
         }
         try {
             JSONObject param = new JSONObject();
-            param.put("sender", address);
+            param.put("sender", payInfo.mSender);
             param.put("receiver", payInfo.mDevID);
             param.put("coinType", payInfo.mCoinType);
             param.put("symbol", payInfo.mToken);
             param.put("amount", payInfo.mAmount);
             param.put("ivKey", payInfo.mIVKey);
-            param.put("paymentToken", paymentToken);
-            param.put("signHash", signHash);
+            param.put("paymentToken", payInfo.mPaymentToken);
+            param.put("signHash", payInfo.mSignedMessage);
 
             Pair<Integer, String> response = this.processPostRequest(dePayUrl, param, mToken, 20000);
             return response;

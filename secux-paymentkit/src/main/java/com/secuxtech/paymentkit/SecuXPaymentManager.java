@@ -68,14 +68,19 @@ public class SecuXPaymentManager extends SecuXPaymentManagerBase{
         }
     }
 
-    public void doDePay(Context context, final String nonce, final String address, final String storeInfo, final String privateKey, final String paymentInfo){
+    public Pair<Integer, String> generateRawTransaction(final String sender, final String deviceId, final String coinType, final String symbol, final String amount){
+        SecuXPaymentKitLogHandler.Log("generateRawTransaction");
+        return mSecuXSvrReqHandler.generateRawTransaction(sender, deviceId, coinType, symbol, amount);
+    }
+
+    public void doDePay(Context context, final String nonce, final String paymentInfo, final String storeInfo){
         SecuXPaymentKitLogHandler.Log("doDePay");
         this.mContext = context;
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-                doDePay(nonce, address, storeInfo, privateKey, paymentInfo);
+                doDePay(nonce, paymentInfo, storeInfo);
             }
         }).start();
     }

@@ -16,11 +16,6 @@ import android.util.Pair;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.web3j.crypto.Credentials;
-import org.web3j.crypto.RawTransaction;
-import org.web3j.crypto.TransactionEncoder;
-import org.web3j.protocol.core.methods.response.Transaction;
-import org.web3j.utils.Numeric;
 
 /*
 import com.secux.payment.sdk.BoxError;
@@ -50,7 +45,7 @@ import java.util.ArrayList;
 import static com.secuxtech.paymentdevicekit.PaymentPeripheralManager.SecuX_Peripheral_Operation_OK;
 import static com.secuxtech.paymentkit.RestRequestHandler.TAG;
 
-class PaymentInfo{
+class PaymentInfo {
     String mCoinType;
     String mToken;
     String mAmount;
@@ -59,23 +54,16 @@ class PaymentInfo{
     String mProductName;
     String mOrderId;
     String mPayChannel;
+    String mSender;
+    String mPaymentToken;
+    String mSignedMessage;
 }
 
-class PaymentDevConfigInfo{
+class PaymentDevConfigInfo {
     String mName;
     int mScanTimeout;
     int mConnTimeout;
     int mRssi;
-}
-
-class RawTransactionInfo{
-    String mPaymentToken;
-    BigInteger mNonce;
-    BigInteger mGasPrice;
-    BigInteger mGas;
-    BigInteger mValue;
-    String mTo;
-    String mData;
 }
 
 public class SecuXPaymentManagerBase {
@@ -88,7 +76,7 @@ public class SecuXPaymentManagerBase {
 
     private SecuXUserAccount mAccount = null;
     private PaymentInfo mPaymentInfo = new PaymentInfo();
-    private RawTransactionInfo mRawTransactionInfo = new RawTransactionInfo();
+//    private RawTransactionInfo mRawTransactionInfo = new RawTransactionInfo();
     private PaymentDevConfigInfo mPaymentDevConfigInfo = new PaymentDevConfigInfo();
 
     private String mStoreInfo = "";
@@ -96,7 +84,7 @@ public class SecuXPaymentManagerBase {
     private ArrayList<String> mStoreSupportedCoinTokenArr = new ArrayList<>();
     public static boolean mIsCompleted = false;
 
-    SecuXPaymentManagerBase(){
+    SecuXPaymentManagerBase() {
         Log.i(TAG, "SecuXPaymentManagerBase");
     }
 
@@ -133,116 +121,101 @@ public class SecuXPaymentManagerBase {
     }
     */
 
-    protected  void doDePay(String nonce, String address, String storeInfo, String privateKey, String paymentInfo){
-        SecuXPaymentKitLogHandler.Log("doDePay");
-        if (getPaymentInfo(paymentInfo) && getPaymentDevConfigInfo(storeInfo)){
-            //generate raw transaction
-            handlePaymentStatus("Generate transaction ...");
-            Pair<Integer, String> payRet = mSecuXSvrReqHandler.generateRawTransaction(address, mPaymentInfo);
-            if(payRet.first != SecuXServerRequestHandler.SecuXRequestOK){
-                handlePaymentDone(false, payRet.second);
-                return;
-            }
-            //signature
-            getRawTransactionsInfo(payRet.second);
-            SecuXPaymentKitLogHandler.Log("mRawTransactionInfo : " + new Gson().toJson(mRawTransactionInfo));
-            // Create the Transaction
-            RawTransaction rawTransaction = RawTransaction.createTransaction(
-                    mRawTransactionInfo.mNonce,
-                    mRawTransactionInfo.mGasPrice,
-                    mRawTransactionInfo.mGas,
-                    mRawTransactionInfo.mTo,
-                    mRawTransactionInfo.mValue,
-                    mRawTransactionInfo.mData);
-
-            // Sign the Transaction
-            handlePaymentStatus("Transaction signing ...");
-            byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, Credentials.create(privateKey));
+//    protected Pair<Integer, String> generateRawTransaction(String address, String paymentInfo) {
+//        Pair<Integer, String> payRet = new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Wrong payment information");
+//        if (getPaymentInfo(paymentInfo)) {
+//            handlePaymentStatus("Generate transaction ...");
+//            payRet = mSecuXSvrReqHandler.generateRawTransaction(address, mPaymentInfo);
+//        }
 //
-            String hexValue = Numeric.toHexString(signedMessage);
-            SecuXPaymentKitLogHandler.Log("signedMessage : " + hexValue);
+//        return payRet;
+//    }
+
+    protected void doDePay(String nonce, String paymentInfo, String storeInfo) {
+        SecuXPaymentKitLogHandler.Log("doDePay");
+        if (getPaymentInfo(paymentInfo) && getPaymentDevConfigInfo(storeInfo)) {
             SecuXPaymentKitLogHandler.Log("pay to device " + mPaymentInfo.mDevID);
             handlePaymentStatus("Device connecting ...");
             byte[] code = SecuXPaymentUtility.hexStringToData(nonce);
             Pair<Integer, String> ret = mPaymentPeripheralManager.doGetIVKey(code, mContext, mPaymentDevConfigInfo.mScanTimeout,
                     mPaymentInfo.mDevID, mPaymentDevConfigInfo.mRssi, mPaymentDevConfigInfo.mConnTimeout);
-            if (ret.first == SecuX_Peripheral_Operation_OK){
+            if (ret.first == SecuX_Peripheral_Operation_OK) {
                 mPaymentInfo.mIVKey = ret.second;
-                sendDePayInfoToDevice(address, hexValue);
-            }else{
+                sendDePayInfoToDevice();
+            } else {
                 handlePaymentDone(false, ret.second);
             }
 
-        }else {
+        } else {
             handlePaymentDone(false, "Wrong payment information");
         }
     }
 
-    protected void doPayment(SecuXUserAccount account, String storeInfo, String paymentInfo){
+    protected void doPayment(SecuXUserAccount account, String storeInfo, String paymentInfo) {
 
         SecuXPaymentKitLogHandler.Log("doPayment");
 
         this.mAccount = account;
 
-        if (getPaymentInfo(paymentInfo) && getPaymentDevConfigInfo(storeInfo)){
+        if (getPaymentInfo(paymentInfo) && getPaymentDevConfigInfo(storeInfo)) {
             SecuXPaymentKitLogHandler.Log("pay to device " + mPaymentInfo.mDevID);
             handlePaymentStatus("Device connecting ...");
 
             Pair<Integer, String> ret = mPaymentPeripheralManager.doGetIVKey(mContext, mPaymentDevConfigInfo.mScanTimeout,
                     mPaymentInfo.mDevID, mPaymentDevConfigInfo.mRssi, mPaymentDevConfigInfo.mConnTimeout);
-            if (ret.first == SecuX_Peripheral_Operation_OK){
+            if (ret.first == SecuX_Peripheral_Operation_OK) {
                 mPaymentInfo.mIVKey = ret.second;
                 sendInfoToDevice();
-            }else{
+            } else {
                 handlePaymentDone(false, ret.second);
             }
 
-        }else {
+        } else {
             handlePaymentDone(false, "Wrong payment information");
         }
 
     }
 
-    protected void doPayment(String nonce, SecuXUserAccount account, String storeInfo, String paymentInfo){
+    protected void doPayment(String nonce, SecuXUserAccount account, String storeInfo, String paymentInfo) {
 
         SecuXPaymentKitLogHandler.Log("doPayment");
 
         this.mAccount = account;
 
-        if (getPaymentInfo(paymentInfo) && getPaymentDevConfigInfo(storeInfo)){
+        if (getPaymentInfo(paymentInfo) && getPaymentDevConfigInfo(storeInfo)) {
             SecuXPaymentKitLogHandler.Log("pay to device " + mPaymentInfo.mDevID);
             handlePaymentStatus("Device connecting ...");
 
             byte[] code = SecuXPaymentUtility.hexStringToData(nonce);
             Pair<Integer, String> ret = mPaymentPeripheralManager.doGetIVKey(code, mContext, mPaymentDevConfigInfo.mScanTimeout,
                     mPaymentInfo.mDevID, mPaymentDevConfigInfo.mRssi, mPaymentDevConfigInfo.mConnTimeout);
-            if (ret.first == SecuX_Peripheral_Operation_OK){
+            if (ret.first == SecuX_Peripheral_Operation_OK) {
                 mPaymentInfo.mIVKey = ret.second;
                 sendInfoToDevice();
-            }else{
+            } else {
                 handlePaymentDone(false, ret.second);
             }
 
-        }else {
+        } else {
             handlePaymentDone(false, "Wrong payment information");
         }
 
     }
 
-    protected void doPayment(String paymentInfo){
+    protected void doPayment(String paymentInfo) {
 
         SecuXPaymentKitLogHandler.Log("doPayment");
 
-        if (getPaymentInfo(paymentInfo)){
+        if (getPaymentInfo(paymentInfo)) {
             SecuXPaymentKitLogHandler.Log("pay to device " + mPaymentInfo.mDevID);
 
             handlePaymentStatus(mPaymentInfo.mToken + " transferring...");
             Pair<Integer, String> payRet = mSecuXSvrReqHandler.doPayment(mPaymentInfo);
-            if (payRet.first == SecuXServerRequestHandler.SecuXRequestUnauthorized){
+            if (payRet.first == SecuXServerRequestHandler.SecuXRequestUnauthorized) {
                 //mPaymentPeripheralManager.requestDisconnect();
                 handleAccountUnauthorized();
                 return;
-            }else if (payRet.first != SecuXServerRequestHandler.SecuXRequestOK){
+            } else if (payRet.first != SecuXServerRequestHandler.SecuXRequestOK) {
                 //mPaymentPeripheralManager.requestDisconnect();
                 handlePaymentDone(false, payRet.second);
                 return;
@@ -256,7 +229,7 @@ public class SecuXPaymentManagerBase {
                 int statusCode = payRetJson.getInt("statusCode");
                 String statusDesc = payRetJson.getString("statusDesc");
 
-                if (statusCode != 200){
+                if (statusCode != 200) {
                     //mPaymentPeripheralManager.requestDisconnect();
                     handlePaymentDone(false, statusDesc);
                     return;
@@ -265,38 +238,19 @@ public class SecuXPaymentManagerBase {
                 String transCode = payRetJson.getString("transactionCode");
                 handlePaymentDone(true, transCode);
 
-            }catch (Exception e){
-                SecuXPaymentKitLogHandler.Log( e.getLocalizedMessage());
+            } catch (Exception e) {
+                SecuXPaymentKitLogHandler.Log(e.getLocalizedMessage());
                 //mPaymentPeripheralManager.requestDisconnect();
                 handlePaymentDone(false, mPaymentInfo.mCoinType.toString() + " transfer failed!");
             }
 
-        }else {
+        } else {
             handlePaymentDone(false, "Wrong payment information");
         }
 
     }
 
-    protected boolean getRawTransactionsInfo(String rawTxInfo){
-        try {
-            SecuXPaymentKitLogHandler.Log(" getRawTransactionsInfo : " + rawTxInfo);
-            JSONObject jsonInfo = new JSONObject(rawTxInfo);
-            mRawTransactionInfo.mPaymentToken = jsonInfo.getString("paymentToken");
-            JSONObject dataInfo = new JSONObject(jsonInfo.getString("data"));
-            SecuXPaymentKitLogHandler.Log(" getRawTransactionsInfo　dataInfo : " + jsonInfo.getString("data"));
-            mRawTransactionInfo.mNonce = Numeric.toBigInt(dataInfo.getString("nonce"));
-            mRawTransactionInfo.mGasPrice = Numeric.toBigInt(dataInfo.getString("gasPrice"));
-            mRawTransactionInfo.mGas = Numeric.toBigInt(dataInfo.getString("gas"));
-            mRawTransactionInfo.mValue = Numeric.toBigInt(dataInfo.getString("value"));
-            mRawTransactionInfo.mTo = dataInfo.getString("to");
-            mRawTransactionInfo.mData = dataInfo.getString("data");
-        }catch (Exception e){
-            return false;
-        }
-        return true;
-    }
-
-    protected boolean getPaymentInfo(String paymentInfo){
+    protected boolean getPaymentInfo(String paymentInfo) {
         try {
             JSONObject jsonInfo = new JSONObject(paymentInfo);
             mPaymentInfo.mAmount = jsonInfo.getString("amount");
@@ -306,14 +260,17 @@ public class SecuXPaymentManagerBase {
             mPaymentInfo.mProductName = jsonInfo.getString("productName");
             mPaymentInfo.mPayChannel = jsonInfo.getString("payChannel");
 //            mPaymentInfo.mOrderId = jsonInfo.getString("orderId");
+            mPaymentInfo.mSender = jsonInfo.getString("sender");
+            mPaymentInfo.mPaymentToken = jsonInfo.getString("paymentToken");
+            mPaymentInfo.mSignedMessage = jsonInfo.getString("signedMessage");
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
         return true;
     }
 
-    protected boolean getPaymentDevConfigInfo(String storeInfo){
+    protected boolean getPaymentDevConfigInfo(String storeInfo) {
         try {
             JSONObject jsonInfo = new JSONObject(storeInfo);
             mPaymentDevConfigInfo.mName = jsonInfo.getString("name");
@@ -321,13 +278,13 @@ public class SecuXPaymentManagerBase {
             mPaymentDevConfigInfo.mScanTimeout = jsonInfo.getInt("scanTimeout");
             mPaymentDevConfigInfo.mRssi = jsonInfo.getInt("checkRSSI");
 
-        }catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
         return true;
     }
 
-    protected Pair<Integer, String> sendRefundOrRefillInfoToDevice(String info){
+    protected Pair<Integer, String> sendRefundOrRefillInfoToDevice(String info) {
 
         SecuXPaymentKitLogHandler.Log(SystemClock.uptimeMillis() + " sendRefundOrRefillInfoToDevice ");
         Pair<Integer, String> ret = new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Unknown error");
@@ -337,7 +294,7 @@ public class SecuXPaymentManagerBase {
             int statusCode = payRetJson.getInt("statusCode");
             String statusDesc = payRetJson.getString("statusDesc");
 
-            if (statusCode != 200){
+            if (statusCode != 200) {
                 mPaymentPeripheralManager.requestDisconnect();
                 return new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, "Invalid status code!");
             }
@@ -345,7 +302,7 @@ public class SecuXPaymentManagerBase {
             String ioControlParams = payRetJson.getString("machineControlParam");
             JSONObject ioCtrlParamJson = new JSONObject(ioControlParams);
 
-            final MachineIoControlParam machineIoControlParam=new MachineIoControlParam();
+            final MachineIoControlParam machineIoControlParam = new MachineIoControlParam();
             machineIoControlParam.setGpio1(ioCtrlParamJson.getString("gpio1"));
             machineIoControlParam.setGpio2(ioCtrlParamJson.getString("gpio2"));
             machineIoControlParam.setGpio31(ioCtrlParamJson.getString("gpio31"));
@@ -368,16 +325,16 @@ public class SecuXPaymentManagerBase {
 
 
             Pair<Integer, String> verifyRet = mPaymentPeripheralManager.doPaymentVerification(encryptedData, machineIoControlParam);
-            if (verifyRet.first == SecuX_Peripheral_Operation_OK){
+            if (verifyRet.first == SecuX_Peripheral_Operation_OK) {
 
                 ret = new Pair<>(SecuXServerRequestHandler.SecuXRequestOK, transCode);
-            }else{
+            } else {
 
                 ret = new Pair<>(SecuXServerRequestHandler.SecuXRequestFailed, verifyRet.second);
             }
 
 
-        }catch (Exception e){
+        } catch (Exception e) {
             SecuXPaymentKitLogHandler.Log(e.getLocalizedMessage());
             mPaymentPeripheralManager.requestDisconnect();
 
@@ -386,11 +343,11 @@ public class SecuXPaymentManagerBase {
         return ret;
     }
 
-    protected void sendDePayInfoToDevice(String address, String hexValue){
+    protected void sendDePayInfoToDevice() {
         SecuXPaymentKitLogHandler.Log(SystemClock.uptimeMillis() + " sendDePayInfoToDevice amount=" + mPaymentInfo.mAmount);
         handlePaymentStatus(mPaymentInfo.mToken + " transferring...");
-        Pair<Integer, String> payRet = mSecuXSvrReqHandler.dePay(address, mRawTransactionInfo.mPaymentToken, hexValue, mPaymentInfo);
-        if (payRet.first != SecuXServerRequestHandler.SecuXRequestOK){
+        Pair<Integer, String> payRet = mSecuXSvrReqHandler.dePay(mPaymentInfo);
+        if (payRet.first != SecuXServerRequestHandler.SecuXRequestOK) {
             mPaymentPeripheralManager.requestDisconnect();
             handlePaymentDone(false, payRet.second);
             return;
@@ -404,7 +361,7 @@ public class SecuXPaymentManagerBase {
             int statusCode = payRetJson.getInt("statusCode");
             String statusDesc = payRetJson.getString("statusDesc");
 
-            if (statusCode != 200){
+            if (statusCode != 200) {
                 mPaymentPeripheralManager.requestDisconnect();
                 handlePaymentDone(false, statusDesc);
                 return;
@@ -413,7 +370,7 @@ public class SecuXPaymentManagerBase {
             String ioControlParams = payRetJson.getString("machineControlParam");
             JSONObject ioCtrlParamJson = new JSONObject(ioControlParams);
 
-            final MachineIoControlParam machineIoControlParam=new MachineIoControlParam();
+            final MachineIoControlParam machineIoControlParam = new MachineIoControlParam();
             machineIoControlParam.setGpio1(ioCtrlParamJson.getString("gpio1"));
             machineIoControlParam.setGpio2(ioCtrlParamJson.getString("gpio2"));
             machineIoControlParam.setGpio31(ioCtrlParamJson.getString("gpio31"));
@@ -437,25 +394,26 @@ public class SecuXPaymentManagerBase {
             handlePaymentStatus("Device verifying...");
 
             android.util.Pair<Integer, String> verifyRet = mPaymentPeripheralManager.doPaymentVerification(encryptedData, machineIoControlParam);
-            if (verifyRet.first == SecuX_Peripheral_Operation_OK){
+            if (verifyRet.first == SecuX_Peripheral_Operation_OK) {
                 handlePaymentDone(true, transCode);
-            }else{
+            } else {
                 handlePaymentDone(false, verifyRet.second);
             }
 
-        }catch (Exception e){
-            SecuXPaymentKitLogHandler.Log( e.getLocalizedMessage());
+        } catch (Exception e) {
+            SecuXPaymentKitLogHandler.Log(e.getLocalizedMessage());
             mPaymentPeripheralManager.requestDisconnect();
             handlePaymentDone(false, mPaymentInfo.mCoinType.toString() + " transfer failed!");
         }
     }
-    protected void sendInfoToDevice(){
+
+    protected void sendInfoToDevice() {
 
         SecuXPaymentKitLogHandler.Log(SystemClock.uptimeMillis() + " sendInfoToDevice amount=" + mPaymentInfo.mAmount);
 
         handlePaymentStatus(mPaymentInfo.mToken + " transferring...");
         Pair<Integer, String> payRet;
-        if(mPaymentInfo.mCoinType.equalsIgnoreCase("TWD")){
+        if (mPaymentInfo.mCoinType.equalsIgnoreCase("TWD")) {
             payRet = mSecuXSvrReqHandler.getFiatPaymentUrl(mPaymentInfo);
             try {
                 JSONObject payRetJson = new JSONObject(payRet.second);
@@ -463,15 +421,15 @@ public class SecuXPaymentManagerBase {
                 mPaymentInfo.mOrderId = payRetJson.getString("orderId");
 //                String url = "http://www.example.com";
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(payRetJson.getString( "paymentUrl")));
+                intent.setData(Uri.parse(payRetJson.getString("paymentUrl")));
                 mContext.startActivity(intent);
                 int time = 1;
-                while(!mIsCompleted){
-                    if(time > mPaymentDevConfigInfo.mConnTimeout){
+                while (!mIsCompleted) {
+                    if (time > mPaymentDevConfigInfo.mConnTimeout) {
                         payRet = new Pair<Integer, String>(SecuXServerRequestHandler.SecuXRequestFailed, "consumer payment time out");
                         throw new InterruptedException("consumer payment time out");
                     }
-                    Thread.sleep(1*1000);
+                    Thread.sleep(1 * 1000);
                     time++;
                 }
                 payRet = mSecuXSvrReqHandler.checkFiatPayment(mPaymentInfo);
@@ -479,14 +437,14 @@ public class SecuXPaymentManagerBase {
                 e.printStackTrace();
                 handlePaymentDone(false, payRet.second);
             }
-        }else {
+        } else {
             payRet = mSecuXSvrReqHandler.doPayment(mAccount.mAccountName, mPaymentDevConfigInfo.mName, mPaymentInfo);
         }
-        if (payRet.first == SecuXServerRequestHandler.SecuXRequestUnauthorized){
+        if (payRet.first == SecuXServerRequestHandler.SecuXRequestUnauthorized) {
             mPaymentPeripheralManager.requestDisconnect();
             handleAccountUnauthorized();
             return;
-        }else if (payRet.first != SecuXServerRequestHandler.SecuXRequestOK){
+        } else if (payRet.first != SecuXServerRequestHandler.SecuXRequestOK) {
             mPaymentPeripheralManager.requestDisconnect();
             handlePaymentDone(false, payRet.second);
             return;
@@ -500,7 +458,7 @@ public class SecuXPaymentManagerBase {
             int statusCode = payRetJson.getInt("statusCode");
             String statusDesc = payRetJson.getString("statusDesc");
 
-            if (statusCode != 200){
+            if (statusCode != 200) {
                 mPaymentPeripheralManager.requestDisconnect();
                 handlePaymentDone(false, statusDesc);
                 return;
@@ -509,7 +467,7 @@ public class SecuXPaymentManagerBase {
             String ioControlParams = payRetJson.getString("machineControlParam");
             JSONObject ioCtrlParamJson = new JSONObject(ioControlParams);
 
-            final MachineIoControlParam machineIoControlParam=new MachineIoControlParam();
+            final MachineIoControlParam machineIoControlParam = new MachineIoControlParam();
             machineIoControlParam.setGpio1(ioCtrlParamJson.getString("gpio1"));
             machineIoControlParam.setGpio2(ioCtrlParamJson.getString("gpio2"));
             machineIoControlParam.setGpio31(ioCtrlParamJson.getString("gpio31"));
@@ -543,9 +501,9 @@ public class SecuXPaymentManagerBase {
              */
 
             android.util.Pair<Integer, String> verifyRet = mPaymentPeripheralManager.doPaymentVerification(encryptedData, machineIoControlParam);
-            if (verifyRet.first == SecuX_Peripheral_Operation_OK){
+            if (verifyRet.first == SecuX_Peripheral_Operation_OK) {
                 handlePaymentDone(true, transCode);
-            }else{
+            } else {
                 handlePaymentDone(false, verifyRet.second);
             }
 
@@ -559,27 +517,27 @@ public class SecuXPaymentManagerBase {
 
              */
 
-        }catch (Exception e){
-            SecuXPaymentKitLogHandler.Log( e.getLocalizedMessage());
+        } catch (Exception e) {
+            SecuXPaymentKitLogHandler.Log(e.getLocalizedMessage());
             mPaymentPeripheralManager.requestDisconnect();
             handlePaymentDone(false, mPaymentInfo.mCoinType.toString() + " transfer failed!");
         }
     }
 
 
-    protected void handlePaymentStatus(final String status){
+    protected void handlePaymentStatus(final String status) {
         SecuXPaymentKitLogHandler.Log("Payment status " + status);
-        if (mCallback!=null){
+        if (mCallback != null) {
             mCallback.updatePaymentStatus(status);
         }
     }
 
-    protected void handlePaymentDone(final boolean ret, final String errorMsg){
+    protected void handlePaymentDone(final boolean ret, final String errorMsg) {
         SecuXPaymentKitLogHandler.Log("Payment done " + String.valueOf(ret) + " msg:" + errorMsg);
-        if (mCallback!=null){
+        if (mCallback != null) {
             String transCode = "";
             String error = errorMsg;
-            if (ret){
+            if (ret) {
                 transCode = errorMsg;
                 error = "";
             }
@@ -587,9 +545,9 @@ public class SecuXPaymentManagerBase {
         }
     }
 
-    protected void handleAccountUnauthorized(){
+    protected void handleAccountUnauthorized() {
         SecuXPaymentKitLogHandler.Log("Account unauthorized!");
-        if (mCallback!=null){
+        if (mCallback != null) {
             mCallback.userAccountUnauthorized();
         }
     }
