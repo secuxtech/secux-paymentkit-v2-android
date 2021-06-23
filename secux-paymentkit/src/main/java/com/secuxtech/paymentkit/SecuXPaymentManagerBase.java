@@ -76,7 +76,7 @@ public class SecuXPaymentManagerBase {
 
     private SecuXUserAccount mAccount = null;
     private PaymentInfo mPaymentInfo = new PaymentInfo();
-//    private RawTransactionInfo mRawTransactionInfo = new RawTransactionInfo();
+    //    private RawTransactionInfo mRawTransactionInfo = new RawTransactionInfo();
     private PaymentDevConfigInfo mPaymentDevConfigInfo = new PaymentDevConfigInfo();
 
     private String mStoreInfo = "";
@@ -253,16 +253,35 @@ public class SecuXPaymentManagerBase {
     protected boolean getPaymentInfo(String paymentInfo) {
         try {
             JSONObject jsonInfo = new JSONObject(paymentInfo);
-            mPaymentInfo.mAmount = jsonInfo.getString("amount");
-            mPaymentInfo.mDevID = jsonInfo.getString("deviceID");
-            mPaymentInfo.mCoinType = jsonInfo.getString("coinType");
-            mPaymentInfo.mToken = jsonInfo.getString("token");
-            mPaymentInfo.mProductName = jsonInfo.getString("productName");
-            mPaymentInfo.mPayChannel = jsonInfo.getString("payChannel");
+            if (jsonInfo.has("amount")) {
+                mPaymentInfo.mAmount = jsonInfo.getString("amount");
+            }
+            if (jsonInfo.has("deviceID")) {
+                mPaymentInfo.mDevID = jsonInfo.getString("deviceID");
+            }
+            if (jsonInfo.has("coinType")) {
+                mPaymentInfo.mCoinType = jsonInfo.getString("coinType");
+            }
+            if (jsonInfo.has("token")) {
+                mPaymentInfo.mToken = jsonInfo.getString("token");
+            }
+            if (jsonInfo.has("productName")) {
+                mPaymentInfo.mProductName = jsonInfo.getString("productName");
+            }
+            if (jsonInfo.has("payChannel")) {
+                mPaymentInfo.mPayChannel = jsonInfo.getString("payChannel");
+            }
+            if (jsonInfo.has("sender")) {
+                mPaymentInfo.mSender = jsonInfo.getString("sender");
+            }
+            if (jsonInfo.has("paymentToken")) {
+                mPaymentInfo.mPaymentToken = jsonInfo.getString("paymentToken");
+            }
+            if (jsonInfo.has("signedMessage")) {
+                mPaymentInfo.mSignedMessage = jsonInfo.getString("signedMessage");
+            }
 //            mPaymentInfo.mOrderId = jsonInfo.getString("orderId");
-            mPaymentInfo.mSender = jsonInfo.getString("sender");
-            mPaymentInfo.mPaymentToken = jsonInfo.getString("paymentToken");
-            mPaymentInfo.mSignedMessage = jsonInfo.getString("signedMessage");
+
 
         } catch (Exception e) {
             return false;
