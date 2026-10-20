@@ -86,14 +86,7 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             adminPwd = mAdminPassword;
         } else {
 
-            /*
-            adminName = "secux_register";
-            adminPwd = "!secux_register@123";
-            if (SecuXServerRequestHandler.baseURL.compareToIgnoreCase("https://pmsweb.secuxtech.com") == 0){
-                adminPwd = "168!Secux@168";
-            }
 
-             */
 
             return "";
         }
@@ -657,11 +650,7 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
     }
 
     public Pair<Integer, String> refund(String devIDHash, String ivKey, String dataHash) {
-        /*
-            "deviceIDhash": "592e41d67ee326f82fd6be518fd488d752f5a1b9",
-	        "ivKey": "GfJasMOeUhJ6PvJh",
-	        "hashTx": "pM4IcNRf7NbaNQ9OPoxjwM3zt7heM4yffG+1TQiawus="
-         */
+
 
         SecuXPaymentKitLogHandler.Log("refund");
 
@@ -678,7 +667,6 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             param.put("hashTx", dataHash);
             param.put("timeZone", "" + tz.getRawOffset() / 1000);
 
-            Log.i(TAG, "Refund param " + param.toString());
             Pair<Integer, String> response = this.processPostRequest(refundUrl, param, mToken);
             return response;
 
@@ -690,11 +678,7 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
     }
 
     public Pair<Integer, String> refill(String devIDHash, String ivKey, String dataHash) {
-        /*
-            "deviceIDhash": "592e41d67ee326f82fd6be518fd488d752f5a1b9",
-	        "ivKey": "GfJasMOeUhJ6PvJh",
-	        "hashTx": "pM4IcNRf7NbaNQ9OPoxjwM3zt7heM4yffG+1TQiawus="
-         */
+
 
         SecuXPaymentKitLogHandler.Log("refill");
 
@@ -711,7 +695,6 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             param.put("hashTx", dataHash);
             param.put("timeZone", "" + tz.getRawOffset() / 1000);
 
-            Log.i(TAG, "Refill param: " + param.toString());
             Pair<Integer, String> response = this.processPostRequest(refillUrl, param, mToken);
             return response;
 
@@ -742,7 +725,6 @@ public class SecuXServerRequestHandler extends RestRequestHandler {
             param.put("timeZone", timeZone);
 
 
-            Log.i(TAG, "encryptPaymentData param: " + param.toString());
             Pair<Integer, String> response = this.processPostRequest(encryptPaymentDataUrl, param, mToken);
             return response;
 

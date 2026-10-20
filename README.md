@@ -94,7 +94,7 @@ Set server URL before using the APIs below
 ```java
     String serverUrl = "https://pmsweb-test.secux.io";
     SecuXAccountManager accMgr = new SecuXAccountManager();
-    accMgr.setAdminAccount("test", "12345678");
+    accMgr.setAdminAccount("test", userPassword);
 ```
 
 
@@ -165,7 +165,7 @@ private SecuXAccountManager mAccountManager = new SecuXAccountManager();
 
 ```java
     SecuXUserAccount newAccount = new SecuXUserAccount("xxxxx", "+886-123456789", 
-                                                       "12345678");
+                                                       userPassword);
 
     Pair<Integer, String> ret = mAccountManager.registerUserAccount(account, "DCT", "SPC");
     if (ret.first==SecuXServerRequestHandler.SecuXRequestOK) {
@@ -197,7 +197,7 @@ Note: **Login session is valid for 30 minutes**. To continue use after 30 minute
 #### <u>Sample</u>
 ```java
     SecuXUserAccount account = new SecuXUserAccount("maochuntest9@secuxtech.com", "", 
-                                                    "12345678");
+                                                    userPassword);
 
     Pair<Integer, String> ret = mAccountManager.loginUserAccount(mAccount);
     if (ret.first==SecuXServerRequestHandler.SecuXRequestOK){
