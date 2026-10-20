@@ -47,36 +47,28 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        //bitsense_register
-        //!bitsense_register@168
+        // No automatic account or payment demo runs on launch.
+        // Configure disposable test credentials explicitly before calling a demo action.
+    }
 
-        //adminName = "secux_register";
-        //adminPwd = "!secux_register@123";
-
-        mAccountManager.setAdminAccount("secux_register", "!secux_register@123");
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //User account operations
-                mAccount = new SecuXUserAccount("maochuntest1@secuxtech.com", "12345678");
-
-                testAccount();
-                //testPayment();
-                //testRefundRefill();
-                //testSpringTreesAPIs();
-
-
-            }
-        }).start();
+    public boolean configureDemo(SecuXUserAccount account, String adminName, String adminPassword) {
+        if (account == null || account.mAccountName == null || account.mAccountName.isEmpty()
+                || account.mPassword == null || account.mPassword.isEmpty()
+                || adminName == null || adminName.trim().isEmpty()
+                || adminPassword == null || adminPassword.trim().isEmpty()) {
+            return false;
+        }
+        mAccount = account;
+        mAccountManager.setAdminAccount(adminName, adminPassword);
+        return true;
     }
 
     public void testAccount() {
+        if (mAccount == null) { return; }
         Pair<Integer, String> ret = mAccountManager.loginUserAccount(mAccount);
 
         if (ret.first == SecuXServerRequestHandler.SecuXRequestOK) {
 
-            //ret = mAccountManager.changePassword("12345678", "12345678");
 
             List<Pair<String, String>> coinTokenArray = new ArrayList<>();
             ret = mAccountManager.getSupportedCointokenArray(coinTokenArray);
@@ -120,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void testPayment(){
+        if (mAccount == null) { return; }
         //Payment operations
         Pair<Integer, String>  ret = mAccountManager.loginUserAccount(mAccount);
         if (ret.first==SecuXServerRequestHandler.SecuXRequestOK) {
@@ -181,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void testRefundRefill() {
+        if (mAccount == null) { return; }
         Pair<Integer, String> ret = mAccountManager.loginUserAccount(mAccount);
         if (ret.first == SecuXServerRequestHandler.SecuXRequestOK) {
             //mPaymentManager.doRefund(mContext, "811c000009c5", "592e41d67ee326f82fd6be518fd488d752f5a1b9");
@@ -191,8 +185,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void testSpringTreesAPIs(){
+        if (mAccount == null) { return; }
         mAccountManager.setBaseServer("https://pmsweb-test.secux.io");
-        Pair<Integer, String> ret = mAccountManager.loginMerchantAccount("secuxdemo", "secuxdemo168");
+        Pair<Integer, String> ret = mAccountManager.loginMerchantAccount(mAccount.mAccountName, mAccount.mPassword);
         if (ret.first == SecuXServerRequestHandler.SecuXRequestOK){
             Pair<Pair<Integer, String>, SecuXStoreInfo> storeInfo = mPaymentManager.getStoreInfo("296ec7daa1dd7460d384471ec52127492bf45f9f");
             if (storeInfo.first.first == SecuXServerRequestHandler.SecuXRequestOK){
@@ -256,9 +251,9 @@ public class MainActivity extends AppCompatActivity {
         //Called when the user login account token is timeout. Just login in the account again.
         @Override
         public void userAccountUnauthorized(){
+        if (mAccount == null) { return; }
             Log.i(TAG, "account unauthorized login again");
 
-            mAccount = new SecuXUserAccount("maochuntest6@secuxtech.com", "0975123456", "12345678");
             Pair<Integer, String> ret = mAccountManager.loginUserAccount(mAccount);
 
             if (ret.first==SecuXServerRequestHandler.SecuXRequestOK){
